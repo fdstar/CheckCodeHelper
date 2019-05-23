@@ -109,7 +109,7 @@ namespace CheckCodeHelper
         {
             if (maxLength <= 0 || maxLength >= 10)
             {
-                throw new ArgumentOutOfRangeException($"{nameof(maxLength)} must between {1} and {9}.");
+                throw new ArgumentOutOfRangeException($"{nameof(maxLength)} must between 1 and 9.");
             }
             var rd = Math.Abs(Guid.NewGuid().GetHashCode());
             var tmpX = (int)Math.Pow(10, maxLength);

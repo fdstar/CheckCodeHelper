@@ -85,8 +85,9 @@ namespace CheckCodeHelper.RedisCache
             var key = this.GetCodeKey(receiver, bizFlag);
             if (await db.ExistsAsync(key).ConfigureAwait(false))
             {
-                var errors = await db.HashGetAsync<int>(key, CodeErrorHashKey).ConfigureAwait(false);
-                await db.HashSetAsync(key, CodeErrorHashKey, errors + 1).ConfigureAwait(false);
+                //var errors = await db.HashGetAsync<int>(key, CodeErrorHashKey).ConfigureAwait(false);
+                //await db.HashSetAsync(key, CodeErrorHashKey, errors + 1).ConfigureAwait(false);
+                await db.HashIncerementByAsync(key, CodeErrorHashKey, 1).ConfigureAwait(false);
             }
         }
         /// <summary>
@@ -101,8 +102,9 @@ namespace CheckCodeHelper.RedisCache
             var key = this.GetPeriodKey(receiver, bizFlag);
             if (await db.ExistsAsync(key).ConfigureAwait(false))
             {
-                var times = await db.HashGetAsync<int>(key, PeriodHashKey).ConfigureAwait(false);
-                await db.HashSetAsync(key, PeriodHashKey, times + 1).ConfigureAwait(false);
+                //var times = await db.HashGetAsync<int>(key, PeriodHashKey).ConfigureAwait(false);
+                //await db.HashSetAsync(key, PeriodHashKey, times + 1).ConfigureAwait(false);
+                await db.HashIncerementByAsync(key, PeriodHashKey, 1).ConfigureAwait(false);
             }
         }
         /// <summary>
