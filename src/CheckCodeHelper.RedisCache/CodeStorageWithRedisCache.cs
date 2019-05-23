@@ -157,7 +157,7 @@ namespace CheckCodeHelper.RedisCache
         /// <returns></returns>
         protected virtual string GetKey(string receiver, string bizFlag, string prefix)
         {
-            return string.Format("{0}:{1}:{2}", prefix, receiver, bizFlag);
+            return string.Format("{0}:{1}:{2}", prefix, bizFlag, receiver);
         }
         private string GetPeriodKey(string receiver, string bizFlag)
         {
