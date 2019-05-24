@@ -1,4 +1,6 @@
-﻿using CheckCodeHelper.RedisCache;
+﻿using CheckCodeHelper.Redis;
+using CheckCodeHelper.RedisCache;
+using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Core.Implementations;
@@ -12,27 +14,16 @@ namespace CheckCodeHelper.Samples
     {
         static void Main(string[] args)
         {
-            CheckCodeHelperDemo();
+            //CheckCodeHelperWithRedisDemo(GetStorageWithRedisClient());
+            CheckCodeHelperWithRedisDemo(GetStorageWithRedis());
             Console.ReadLine();
         }
-        static void CheckCodeHelperDemo()
+        static void CheckCodeHelperWithRedisDemo(ICodeStorage storage)
         {
-            var redisConfig = new RedisConfiguration
-            {
-                Hosts = new RedisHost[] {
-                    new RedisHost{
-                         Host="127.0.0.1",
-                         Port=6379
-                    }
-                }
-            };
             var bizFlag = "forgetPassword";
             var receiver = "Receiver";
             var effectiveTime = TimeSpan.FromMinutes(1);
-            var redisManager = new RedisCacheConnectionPoolManager(redisConfig);
-            var redisClient = new RedisCacheClient(redisManager,
-                new NewtonsoftSerializer(), redisConfig);//new ProtobufSerializer();
-            var storage = new CodeStorageWithRedisCache(redisClient);
+            
             var simpleFormatter = new ContentFormatter(
                     (r, b, c, e) => $"{r}您好，您的忘记密码验证码为{c}，有效期为{(int)e.TotalSeconds}秒.");
             var formatter = new ComplexContentFormatter();
@@ -62,7 +53,29 @@ namespace CheckCodeHelper.Samples
                     }
                 }
             }
-            redisManager.Dispose();
+        }
+        private static ICodeStorage GetStorageWithRedisClient()
+        {
+            var redisConfig = new RedisConfiguration
+            {
+                Hosts = new RedisHost[] {
+                    new RedisHost{
+                         Host="127.0.0.1",
+                         Port=6379
+                    }
+                }
+            };
+            var redisManager = new RedisCacheConnectionPoolManager(redisConfig);
+            var redisClient = new RedisCacheClient(redisManager,
+                new NewtonsoftSerializer(), redisConfig);//new ProtobufSerializer();
+            var storage = new CodeStorageWithRedisCache(redisClient);
+            return storage;
+        }
+        private static ICodeStorage GetStorageWithRedis()
+        {
+            var multiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+            var storage = new CodeStorageWithRedis(multiplexer);
+            return storage;
         }
     }
 }
