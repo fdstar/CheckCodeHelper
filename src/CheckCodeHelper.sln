@@ -5,11 +5,15 @@ VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper", "CheckCodeHelper\CheckCodeHelper.csproj", "{F56708BC-6655-4598-8FC4-87AB88D0335B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper.RedisCache", "CheckCodeHelper.RedisCache\CheckCodeHelper.RedisCache.csproj", "{766850FF-63A7-404A-8C43-3D8AC97C2498}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper.Storage.RedisCache", "CheckCodeHelper.Storage.RedisCache\CheckCodeHelper.Storage.RedisCache.csproj", "{766850FF-63A7-404A-8C43-3D8AC97C2498}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper.Samples", "CheckCodeHelper.Samples\CheckCodeHelper.Samples.csproj", "{9410A548-3E81-43CA-8D01-92EC00353038}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckCodeHelper.Redis", "CheckCodeHelper.Redis\CheckCodeHelper.Redis.csproj", "{228189CD-BDD0-4912-A61F-B62522928FF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper.Storage.Redis", "CheckCodeHelper.Storage.Redis\CheckCodeHelper.Storage.Redis.csproj", "{228189CD-BDD0-4912-A61F-B62522928FF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions", "Solutions", "{27744E1C-CEE0-41F7-988D-22734CA8787B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{027DDE37-0525-4118-A625-3F484BDA940A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +40,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F56708BC-6655-4598-8FC4-87AB88D0335B} = {27744E1C-CEE0-41F7-988D-22734CA8787B}
+		{766850FF-63A7-404A-8C43-3D8AC97C2498} = {27744E1C-CEE0-41F7-988D-22734CA8787B}
+		{9410A548-3E81-43CA-8D01-92EC00353038} = {027DDE37-0525-4118-A625-3F484BDA940A}
+		{228189CD-BDD0-4912-A61F-B62522928FF1} = {27744E1C-CEE0-41F7-988D-22734CA8787B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {872232F8-C51F-4A37-B03D-E3108B2A519F}

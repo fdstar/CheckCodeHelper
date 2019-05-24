@@ -1,5 +1,5 @@
-﻿using CheckCodeHelper.Redis;
-using CheckCodeHelper.RedisCache;
+﻿using CheckCodeHelper.Storage.Redis;
+using CheckCodeHelper.Storage.RedisCache;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using StackExchange.Redis.Extensions.Core.Configuration;

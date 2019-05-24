@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CheckCodeHelper.RedisCache\CheckCodeHelper.RedisCache.csproj" />
-    <ProjectReference Include="..\CheckCodeHelper.Redis\CheckCodeHelper.Redis.csproj" />
+    <ProjectReference Include="..\CheckCodeHelper.Storage.RedisCache\CheckCodeHelper.Storage.RedisCache.csproj" />
+    <ProjectReference Include="..\CheckCodeHelper.Storage.Redis\CheckCodeHelper.Storage.Redis.csproj" />
   </ItemGroup>
 
 </Project>

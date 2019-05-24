@@ -1,38 +1,40 @@
-﻿using StackExchange.Redis;
+﻿using StackExchange.Redis.Extensions.Core.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckCodeHelper.Redis
+namespace CheckCodeHelper.Storage.RedisCache
 {
     /// <summary>
     /// 校验码信息存储到Redis
     /// </summary>
-    public class CodeStorageWithRedis : ICodeStorage
+    public class CodeStorageWithRedisCache : ICodeStorage
     {
-        private readonly IConnectionMultiplexer _multiplexer;
+        private readonly IRedisCacheClient _client;
         private const string CodeValueHashKey = "Code";
         private const string CodeErrorHashKey = "Error";
-        private const string PeriodHashKey = "Period";
+        private const string PeriodHashKey = "Number";
         /// <summary>
         /// Code缓存Key值前缀
         /// </summary>
-        public string CodeKeyPrefix { get; set; } = "CC1";
+        public string CodeKeyPrefix { get; set; } = "CC";
         /// <summary>
         /// Period缓存Key值前缀
         /// </summary>
-        public string PeriodKeyPrefix { get; set; } = "CCT1";
+        public string PeriodKeyPrefix { get; set; } = "CCT";
         /// <summary>
         /// 缓存写入Redis哪个库
         /// </summary>
         public int DbNumber { get; set; } = 8;
         /// <summary>
-        /// 基于IConnectionMultiplexer的构造函数
+        /// 基于RedisCacheClient的构造函数
         /// </summary>
-        /// <param name="multiplexer"></param>
-        public CodeStorageWithRedis(IConnectionMultiplexer multiplexer)
+        /// <param name="client"></param>
+        public CodeStorageWithRedisCache(IRedisCacheClient client)
         {
-            this._multiplexer = multiplexer;
+            this._client = client;
         }
         /// <summary>
         /// 获取校验码周期内已发送次数，如果周期已到或未发送过任何验证码，则返回0
@@ -44,8 +46,7 @@ namespace CheckCodeHelper.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetPeriodKey(receiver, bizFlag);
-            var value = await db.HashGetAsync(key, PeriodHashKey).ConfigureAwait(false);
-            value.TryParse(out int times);
+            var times = await db.HashGetAsync<int>(key, PeriodHashKey).ConfigureAwait(false);
 #if DEBUG
             Console.WriteLine("Method:{0} Result:{1}", nameof(GetAreadySendTimes), times);
 #endif
@@ -61,14 +62,13 @@ namespace CheckCodeHelper.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
-            var values = await db.HashGetAsync(key, new RedisValue[] {
-                    CodeValueHashKey,
-                    CodeErrorHashKey,
+            var dic = await db.HashGetAsync<string>(key, new string[] {
+                    CodeValueHashKey,CodeErrorHashKey
                 }).ConfigureAwait(false);
-            if (values != null && values.Length == 2 && values.All(x => x.HasValue))
+            if (dic != null && dic.Count == 2 && dic.Values.All(x => !string.IsNullOrWhiteSpace(x)))
             {
-                var code = values[0].ToString();
-                values[1].TryParse(out int errors);
+                var code = dic[CodeValueHashKey];
+                int.TryParse(dic[CodeErrorHashKey], out int errors);
 #if DEBUG
                 Console.WriteLine("Method:{0} Result:  Code {1} Errors {2} ", nameof(GetEffectiveCode), code, errors);
 #endif
@@ -86,9 +86,9 @@ namespace CheckCodeHelper.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
-            if (await db.KeyExistsAsync(key).ConfigureAwait(false))
+            if (await db.ExistsAsync(key).ConfigureAwait(false))
             {
-                await db.HashIncrementAsync(key, CodeErrorHashKey, 1).ConfigureAwait(false);
+                await db.HashIncerementByAsync(key, CodeErrorHashKey, 1).ConfigureAwait(false);
             }
         }
         /// <summary>
@@ -101,9 +101,9 @@ namespace CheckCodeHelper.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetPeriodKey(receiver, bizFlag);
-            if (await db.KeyExistsAsync(key).ConfigureAwait(false))
+            if (await db.ExistsAsync(key).ConfigureAwait(false))
             {
-                await db.HashIncrementAsync(key, PeriodHashKey, 1).ConfigureAwait(false);
+                await db.HashIncerementByAsync(key, PeriodHashKey, 1).ConfigureAwait(false);
             }
         }
         /// <summary>
@@ -118,17 +118,9 @@ namespace CheckCodeHelper.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
-            var ret = await await db.HashSetAsync(key, new HashEntry[] {
-                new HashEntry(CodeValueHashKey,code),
-                new HashEntry(CodeErrorHashKey,0)
-            }).ContinueWith(async t =>
-            {
-                if (t.IsCompleted)
-                {
-                    return await db.KeyExpireAsync(key, effectiveTime).ConfigureAwait(false);
-                }
-                return false;
-            }).ConfigureAwait(false);
+            await db.HashSetAsync(key, CodeValueHashKey, code).ConfigureAwait(false);
+            await db.HashSetAsync(key, CodeErrorHashKey, 0).ConfigureAwait(false);
+            var ret = await db.UpdateExpiryAsync(key, effectiveTime).ConfigureAwait(false);
 #if DEBUG
             Console.WriteLine("Method:{0} Result:{1}", nameof(SetCode), ret);
 #endif
@@ -149,7 +141,7 @@ namespace CheckCodeHelper.Redis
             var ret = true;
             if (period.HasValue)
             {
-                ret = await db.KeyExpireAsync(key, period.Value);
+                ret = await db.UpdateExpiryAsync(key, period.Value);
             }
 #if DEBUG
             Console.WriteLine("Method:{0} Result:{1}", nameof(SetPeriod), ret);
@@ -175,9 +167,9 @@ namespace CheckCodeHelper.Redis
         {
             return this.GetKey(receiver, bizFlag, this.CodeKeyPrefix);
         }
-        private IDatabase GetDatabase()
+        private IRedisDatabase GetDatabase()
         {
-            return this._multiplexer.GetDatabase(this.DbNumber);
+            return this._client.GetDb(this.DbNumber);
         }
     }
 }
