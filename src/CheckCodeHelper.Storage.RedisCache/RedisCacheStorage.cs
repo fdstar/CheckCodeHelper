@@ -10,7 +10,7 @@ namespace CheckCodeHelper.Storage.RedisCache
     /// <summary>
     /// 校验码信息存储到Redis
     /// </summary>
-    public class CodeStorageWithRedisCache : ICodeStorage
+    public class RedisCacheStorage : ICodeStorage
     {
         private readonly IRedisCacheClient _client;
         private const string CodeValueHashKey = "Code";
@@ -32,7 +32,7 @@ namespace CheckCodeHelper.Storage.RedisCache
         /// 基于RedisCacheClient的构造函数
         /// </summary>
         /// <param name="client"></param>
-        public CodeStorageWithRedisCache(IRedisCacheClient client)
+        public RedisCacheStorage(IRedisCacheClient client)
         {
             this._client = client;
         }

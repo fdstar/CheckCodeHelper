@@ -68,13 +68,13 @@ namespace CheckCodeHelper.Samples
             var redisManager = new RedisCacheConnectionPoolManager(redisConfig);
             var redisClient = new RedisCacheClient(redisManager,
                 new NewtonsoftSerializer(), redisConfig);//new ProtobufSerializer();
-            var storage = new CodeStorageWithRedisCache(redisClient);
+            var storage = new RedisCacheStorage(redisClient);
             return storage;
         }
         private static ICodeStorage GetStorageWithRedis()
         {
             var multiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
-            var storage = new CodeStorageWithRedis(multiplexer);
+            var storage = new RedisStorage(multiplexer);
             return storage;
         }
     }

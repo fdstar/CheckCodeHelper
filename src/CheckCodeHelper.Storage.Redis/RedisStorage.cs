@@ -8,7 +8,7 @@ namespace CheckCodeHelper.Storage.Redis
     /// <summary>
     /// 校验码信息存储到Redis
     /// </summary>
-    public class CodeStorageWithRedis : ICodeStorage
+    public class RedisStorage : ICodeStorage
     {
         private readonly IConnectionMultiplexer _multiplexer;
         private const string CodeValueHashKey = "Code";
@@ -30,7 +30,7 @@ namespace CheckCodeHelper.Storage.Redis
         /// 基于IConnectionMultiplexer的构造函数
         /// </summary>
         /// <param name="multiplexer"></param>
-        public CodeStorageWithRedis(IConnectionMultiplexer multiplexer)
+        public RedisStorage(IConnectionMultiplexer multiplexer)
         {
             this._multiplexer = multiplexer;
         }
