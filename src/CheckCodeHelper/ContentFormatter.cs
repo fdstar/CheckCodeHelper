@@ -11,7 +11,7 @@ namespace CheckCodeHelper
     /// </summary>
     public class ContentFormatter : IContentFormatter
     {
-        private Func<string, string, string, TimeSpan, string> _func;
+        private readonly Func<string, string, string, TimeSpan, string> _func;
         /// <summary>
         /// 通用实现，这样就无需每种业务类型都要实现<see cref="IContentFormatter"/>
         /// </summary>

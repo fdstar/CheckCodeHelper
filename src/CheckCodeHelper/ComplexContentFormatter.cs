@@ -12,7 +12,7 @@ namespace CheckCodeHelper
     /// </summary>
     public class ComplexContentFormatter : IComplexContentFormatter
     {
-        private ConcurrentDictionary<string, IContentFormatter> _dic = new ConcurrentDictionary<string, IContentFormatter>();
+        private readonly ConcurrentDictionary<string, IContentFormatter> _dic = new ConcurrentDictionary<string, IContentFormatter>();
         /// <summary>
         /// 设置指定业务对应的内容模板
         /// </summary>
