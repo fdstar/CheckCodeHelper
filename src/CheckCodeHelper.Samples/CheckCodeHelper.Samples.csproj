@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CheckCodeHelper.Sender.EMail\CheckCodeHelper.Sender.EMail.csproj" />
+    <ProjectReference Include="..\CheckCodeHelper.Sender.Sms\CheckCodeHelper.Sender.Sms.csproj" />
     <ProjectReference Include="..\CheckCodeHelper.Storage.RedisCache\CheckCodeHelper.Storage.RedisCache.csproj" />
     <ProjectReference Include="..\CheckCodeHelper.Storage.Redis\CheckCodeHelper.Storage.Redis.csproj" />
   </ItemGroup>
