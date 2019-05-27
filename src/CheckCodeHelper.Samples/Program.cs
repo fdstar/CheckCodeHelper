@@ -1,5 +1,6 @@
 ﻿using CheckCodeHelper.Sender.EMail;
 using CheckCodeHelper.Sender.Sms;
+using CheckCodeHelper.Storage.MemoryCache;
 using CheckCodeHelper.Storage.Redis;
 using CheckCodeHelper.Storage.RedisCache;
 using StackExchange.Redis;
@@ -21,8 +22,9 @@ namespace CheckCodeHelper.Samples
         {
             ICodeSender sender = null;
             ICodeStorage storage;
-            storage = GetStorageWithRedisClient();
+            //storage = GetRedisCacheStorage();
             //storage = GetStorageWithRedis();
+            storage = GetMemoryCacheStorage();
 
             //sender = GetSmsSender();
             //sender = GetEMailSender();
@@ -44,7 +46,7 @@ namespace CheckCodeHelper.Samples
                 MaxLimit = 5,
                 Period = TimeSpan.FromMinutes(20)
             }).Result;
-            Console.WriteLine("发送结果：{0}", sendResult);
+            Console.WriteLine("发送结果：{0} 发送时间：{1:yy-MM-dd HH:mm:ss}", sendResult, DateTime.Now);
             if (sendResult == SendResult.Success)
             {
                 Console.WriteLine("*****************************");
@@ -54,7 +56,7 @@ namespace CheckCodeHelper.Samples
                     var vCode = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(vCode)) continue;
                     var vResult = helper.VerifyCode(receiver, bizFlag, vCode, 3).Result;
-                    Console.WriteLine("校验码 {0} 校验结果：{1}", vCode, vResult);
+                    Console.WriteLine("{2:yy-MM-dd HH:mm:ss }校验码 {0} 校验结果：{1}", vCode, vResult, DateTime.Now);
                     if (vResult != VerificationResult.VerificationFailed)
                     {
                         break;
@@ -104,7 +106,7 @@ namespace CheckCodeHelper.Samples
         }
         #endregion
         #region ICodeStorage
-        private static ICodeStorage GetStorageWithRedisClient()
+        private static ICodeStorage GetRedisCacheStorage()
         {
             var redisConfig = new RedisConfiguration
             {
@@ -121,11 +123,15 @@ namespace CheckCodeHelper.Samples
             var storage = new RedisCacheStorage(redisClient);
             return storage;
         }
-        private static ICodeStorage GetStorageWithRedis()
+        private static ICodeStorage GetRedisStorage()
         {
             var multiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
             var storage = new RedisStorage(multiplexer);
             return storage;
+        }
+        private static ICodeStorage GetMemoryCacheStorage()
+        {
+            return new MemoryCacheStorage();
         }
         #endregion
     }
