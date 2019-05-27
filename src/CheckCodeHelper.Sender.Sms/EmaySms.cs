@@ -41,21 +41,27 @@ namespace CheckCodeHelper.Sender.Sms
             Array.Copy(Encoding.UTF8.GetBytes(secretKey.PadRight(key.Length)), key, key.Length);
             this._secretKey = key;
             this.Client = new RestClient(string.Format("{0}://{1}", scheme, host));
-            this.Client.AddDefaultHeader("appId", this._appId);
         }
         /// <summary>
         /// 请求有效期（秒），默认60
         /// </summary>
         public int ValidPeriod { get; set; } = 60;
-        ///// <summary>
-        ///// 请求时是否需要Gzip压缩，默认否
-        ///// </summary>
-        //public bool UseGzip { get; set; }
-        private IRestRequest GetRestRequest(object data, string url)
+        /// <summary>
+        /// 请求时是否需要Gzip压缩，默认true
+        /// </summary>
+        public bool UseGzip { get; set; } = true;
+        private IRestRequest GetRestRequest(object data, string url,bool useGZip)
         {
             var str = JsonConvert.SerializeObject(data);
-            var encryptData = AESHelper.Encrypt(Encoding.UTF8.GetBytes(str), this._secretKey, null, CipherMode.ECB, PaddingMode.PKCS7);
             var request = new RestRequest(url, Method.POST);
+            request.AddHeader("appId", this._appId);
+            var rawData = Encoding.UTF8.GetBytes(str);
+            if (useGZip)
+            {
+                request.AddHeader("gzip", "on");
+                rawData = GZipHelper.Compress(rawData);
+            }
+            var encryptData = AESHelper.Encrypt(rawData, this._secretKey, null, CipherMode.ECB, PaddingMode.PKCS7);
             request.AddParameter(new Parameter
             {
                 Type = ParameterType.RequestBody,
@@ -78,13 +84,21 @@ namespace CheckCodeHelper.Sender.Sms
             };
             return data;
         }
-        private bool IsResponseSuccess(IRestResponse response)
+        private bool IsResponseSuccess(IRestResponse response, bool useGZip)
         {
-            return response.Headers.FirstOrDefault(p => p.Name == "result")?.Value.ToString() == "SUCCESS";
+            bool isSuccess = response.Headers.FirstOrDefault(p => p.Name == "result")?.Value.ToString() == "SUCCESS";
+#if DEBUG
+            var responseStr = this.GetResponseContent(response, useGZip);
+#endif
+            return isSuccess;
         }
-        private string GetResponseContent(IRestResponse response)
+        private string GetResponseContent(IRestResponse response, bool useGZip)
         {
             var data = AESHelper.Decrypt(response.RawBytes, this._secretKey, null, CipherMode.ECB, PaddingMode.PKCS7);
+            if (useGZip)
+            {
+                data = GZipHelper.Decompress(data);
+            }
             return Encoding.UTF8.GetString(data);
         }
         /// <summary>
@@ -98,9 +112,10 @@ namespace CheckCodeHelper.Sender.Sms
         public bool SendMessage(string mobile, string content, string bizId = null, DateTime? sendTime = null)
         {
             var data = this.GetSingleSmsObj(mobile, content, bizId, sendTime);
-            var request = this.GetRestRequest(data, SendSingleSmsUrl);
+            var useGZip = this.UseGzip;
+            var request = this.GetRestRequest(data, SendSingleSmsUrl, useGZip);
             var response = this.Client.Execute(request);
-            return this.IsResponseSuccess(response);
+            return this.IsResponseSuccess(response, useGZip);
         }
         /// <summary>
         /// 发送单条短信
@@ -113,9 +128,10 @@ namespace CheckCodeHelper.Sender.Sms
         public async Task<bool> SendMessageAsync(string mobile, string content, string bizId = null, DateTime? sendTime = null)
         {
             var data = this.GetSingleSmsObj(mobile, content, bizId, sendTime);
-            var request = this.GetRestRequest(data, SendSingleSmsUrl);
+            var useGZip = this.UseGzip;
+            var request = this.GetRestRequest(data, SendSingleSmsUrl, useGZip);
             var response = await this.Client.ExecuteTaskAsync(request).ConfigureAwait(false);
-            return this.IsResponseSuccess(response);
+            return this.IsResponseSuccess(response, useGZip);
         }
         /// <summary>
         /// 批量发送短信
@@ -128,9 +144,10 @@ namespace CheckCodeHelper.Sender.Sms
         public bool SendMessageBatch(string content, IList<string> mobiles, IList<string> bizIds = null, DateTime? sendTime = null)
         {
             var data = this.GetBatchSMSObj(content, mobiles, bizIds, sendTime);
-            var request = this.GetRestRequest(data, SendBatchSmsUrl);
+            var useGZip = this.UseGzip;
+            var request = this.GetRestRequest(data, SendBatchSmsUrl, useGZip);
             var response = this.Client.Execute(request);
-            return this.IsResponseSuccess(response);
+            return this.IsResponseSuccess(response, useGZip);
         }
         private object GetBatchSMSObj(string content, IList<string> mobiles, IList<string> bizIds, DateTime? sendTime)
         {
@@ -172,9 +189,10 @@ namespace CheckCodeHelper.Sender.Sms
         public async Task<bool> SendMessageBatchAsync(string content, IList<string> mobiles, IList<string> bizIds = null, DateTime? sendTime = null)
         {
             var data = this.GetBatchSMSObj(content, mobiles, bizIds, sendTime);
-            var request = this.GetRestRequest(data, SendBatchSmsUrl);
+            var useGZip = this.UseGzip;
+            var request = this.GetRestRequest(data, SendBatchSmsUrl, useGZip);
             var response = await this.Client.ExecuteTaskAsync(request).ConfigureAwait(false);
-            return this.IsResponseSuccess(response);
+            return this.IsResponseSuccess(response, useGZip);
         }
     }
 }
