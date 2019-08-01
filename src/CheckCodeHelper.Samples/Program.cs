@@ -25,7 +25,7 @@ namespace CheckCodeHelper.Samples
             //storage = GetRedisCacheStorage();
             //storage = GetStorageWithRedis();
             storage = GetMemoryCacheStorage();
-
+            //sender = new NoneSender(); //无需发送验证码场景
             //sender = GetSmsSender();
             //sender = GetEMailSender();
 
