@@ -15,6 +15,7 @@ namespace CheckCodeHelper.Storage.RedisCache
         private readonly IRedisCacheClient _client;
         private const string CodeValueHashKey = "Code";
         private const string CodeErrorHashKey = "Error";
+        private const string CodeTimeHashKey = "Time";
         private const string PeriodHashKey = "Number";
         /// <summary>
         /// Code缓存Key值前缀
@@ -120,6 +121,7 @@ namespace CheckCodeHelper.Storage.RedisCache
             var key = this.GetCodeKey(receiver, bizFlag);
             await db.HashSetAsync(key, CodeValueHashKey, code).ConfigureAwait(false);
             await db.HashSetAsync(key, CodeErrorHashKey, 0).ConfigureAwait(false);
+            await db.HashSetAsync(key, CodeTimeHashKey, DateTimeOffset.Now.ToUnixTimeMilliseconds()).ConfigureAwait(false);
             var ret = await db.UpdateExpiryAsync(key, effectiveTime).ConfigureAwait(false);
 #if DEBUG
             Console.WriteLine("Method:{0} Result:{1}", nameof(SetCode), ret);
@@ -170,6 +172,24 @@ namespace CheckCodeHelper.Storage.RedisCache
         private IRedisDatabase GetDatabase()
         {
             return this._client.GetDb(this.DbNumber);
+        }
+        /// <summary>
+        /// 获取最后一次校验码持久化的时间
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <param name="bizFlag"></param>
+        /// <returns></returns>
+        public async Task<DateTime?> GetLastSetCodeTime(string receiver, string bizFlag)
+        {
+            DateTime? dt = null;
+            var db = this.GetDatabase();
+            var key = this.GetCodeKey(receiver, bizFlag);
+            var ts = await db.HashGetAsync<long>(key, CodeTimeHashKey).ConfigureAwait(false);
+            if (ts > 0)
+            {
+                dt = DateTimeOffset.FromUnixTimeMilliseconds(ts).ToLocalTime().DateTime;
+            }
+            return dt;
         }
     }
 }

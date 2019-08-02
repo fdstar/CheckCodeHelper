@@ -13,6 +13,7 @@ namespace CheckCodeHelper.Storage.Redis
         private readonly IConnectionMultiplexer _multiplexer;
         private const string CodeValueHashKey = "Code";
         private const string CodeErrorHashKey = "Error";
+        private const string CodeTimeHashKey = "Time";
         private const string PeriodHashKey = "Number";
         /// <summary>
         /// Code缓存Key值前缀
@@ -120,7 +121,8 @@ namespace CheckCodeHelper.Storage.Redis
             var key = this.GetCodeKey(receiver, bizFlag);
             var ret = await await db.HashSetAsync(key, new HashEntry[] {
                 new HashEntry(CodeValueHashKey,code),
-                new HashEntry(CodeErrorHashKey,0)
+                new HashEntry(CodeErrorHashKey,0),
+                new HashEntry(CodeTimeHashKey,DateTimeOffset.Now.ToUnixTimeMilliseconds())
             }).ContinueWith(async t =>
             {
                 if (t.IsCompleted)
@@ -178,6 +180,24 @@ namespace CheckCodeHelper.Storage.Redis
         private IDatabase GetDatabase()
         {
             return this._multiplexer.GetDatabase(this.DbNumber);
+        }
+        /// <summary>
+        /// 获取最后一次校验码持久化的时间
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <param name="bizFlag"></param>
+        /// <returns></returns>
+        public async Task<DateTime?> GetLastSetCodeTime(string receiver, string bizFlag)
+        {
+            DateTime? dt = null;
+            var db = this.GetDatabase();
+            var key = this.GetCodeKey(receiver, bizFlag);
+            var value = await db.HashGetAsync(key, CodeTimeHashKey).ConfigureAwait(false);
+            if (value.HasValue && value.TryParse(out long ts))
+            {
+                dt = DateTimeOffset.FromUnixTimeMilliseconds(ts).ToLocalTime().DateTime;
+            }
+            return dt;
         }
     }
 }

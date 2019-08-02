@@ -56,5 +56,12 @@ namespace CheckCodeHelper
         /// <param name="bizFlag"></param>
         /// <returns></returns>
         Task<int> GetAreadySendTimes(string receiver, string bizFlag);
+        /// <summary>
+        /// 获取最后一次校验码持久化的时间，如果未能获取到则返回null
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <param name="bizFlag"></param>
+        /// <returns></returns>
+        Task<DateTime?> GetLastSetCodeTime(string receiver, string bizFlag);
     }
 }

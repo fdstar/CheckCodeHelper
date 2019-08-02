@@ -22,12 +22,14 @@ namespace CheckCodeHelper.Samples
         {
             ICodeSender sender = null;
             ICodeStorage storage;
-            //storage = GetRedisCacheStorage();
-            //storage = GetStorageWithRedis();
-            storage = GetMemoryCacheStorage();
+
+            //storage = GetRedisCacheStorage(); //基于StackExchange.Redis.Extensions.Core
+            //storage = GetRedisStorage(); //仅基于StackExchange.Redis
+            storage = GetMemoryCacheStorage(); //基于MemoryCache
+
             //sender = new NoneSender(); //无需发送验证码场景
-            //sender = GetSmsSender();
-            //sender = GetEMailSender();
+            //sender = GetSmsSender(); //通过短信发送验证码
+            //sender = GetEMailSender(); //通过邮件发送验证码
 
             CheckCodeHelperDemo(storage, sender);
             Console.ReadLine();
@@ -40,12 +42,31 @@ namespace CheckCodeHelper.Samples
             }
 
             var helper = new CodeHelper(sender, storage);
-            var code = CodeHelper.GetRandomNumber();
+            var code = CodeHelper.GetRandomNumber(); //生成随机的验证码
+
+            Action getTimeAction = () =>
+            {
+                //ICodeStorage.GetLastSetCodeTime用于获取最后一次发送校验码时间
+                //用于比如手机验证码发送后，用户刷新页面时，页面上用于按钮倒计时计数的计算
+                var time = storage.GetLastSetCodeTime(receiver, bizFlag).Result;
+                if (time.HasValue)
+                {
+                    Console.WriteLine("上次发送时间：{0:yy-MM-dd HH:mm:ss.fff}", time.Value);
+                }
+                else
+                {
+                    Console.WriteLine("未能获取到最后一次发送时间");
+                }
+            };
+            getTimeAction();
+
             var sendResult = helper.SendCode(receiver, bizFlag, code, effectiveTime, new PeriodLimit
             {
+                //设置周期为20分钟，然后在此段时间内最多允许发送验证码5次
                 MaxLimit = 5,
                 Period = TimeSpan.FromMinutes(20)
             }).Result;
+            
             Console.WriteLine("发送结果：{0} 发送时间：{1:yy-MM-dd HH:mm:ss}", sendResult, DateTime.Now);
             if (sendResult == SendResult.Success)
             {
@@ -55,6 +76,7 @@ namespace CheckCodeHelper.Samples
                     Console.WriteLine("请输入校验码：");
                     var vCode = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(vCode)) continue;
+                    getTimeAction();
                     var vResult = helper.VerifyCode(receiver, bizFlag, vCode, 3).Result;
                     Console.WriteLine("{2:yy-MM-dd HH:mm:ss }校验码 {0} 校验结果：{1}", vCode, vResult, DateTime.Now);
                     if (vResult != VerificationResult.VerificationFailed)

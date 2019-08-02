@@ -123,6 +123,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
             {
                 Code = code,
                 Number = 0,
+                StorageTime = DateTime.Now
             };
             var key = this.GetCodeKey(receiver, bizFlag);
             this.SetCache(key, storage, effectiveTime);
@@ -173,11 +174,30 @@ namespace CheckCodeHelper.Storage.MemoryCache
         {
             return this.GetKey(receiver, bizFlag, this.CodeKeyPrefix);
         }
+        /// <summary>
+        /// 获取最后一次校验码持久化的时间
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <param name="bizFlag"></param>
+        /// <returns></returns>
+        public Task<DateTime?> GetLastSetCodeTime(string receiver, string bizFlag)
+        {
+            DateTime? dt = null;
+            var key = this.GetCodeKey(receiver, bizFlag);
+            this.Cache.TryGetValue(key, out CodeStorage storage);
+            if (storage != null)
+            {
+                dt = storage.StorageTime;
+            }
+            return Task.FromResult(dt);
+        }
+
         [Serializable]
         private class CodeStorage
         {
             public string Code { get; set; }
             public int Number { get; set; }
+            public DateTime StorageTime { get; set; }
         }
     }
 }
