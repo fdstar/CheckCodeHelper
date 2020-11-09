@@ -37,7 +37,7 @@ namespace CheckCodeHelper
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
         /// <param name="maxSendLimit">周期内最大允许发送配置，为null则表示无限制</param>
-        public async Task<SendResult> SendCode(string receiver, string bizFlag, string code, TimeSpan effectiveTime, PeriodLimit maxSendLimit)
+        public async Task<SendResult> SendCodeAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime, PeriodLimit maxSendLimit)
         {
             var result = SendResult.NotSupprot;
             if (this.Sender.IsSupport(receiver))
@@ -47,25 +47,25 @@ namespace CheckCodeHelper
                 int sendTimes = 0;
                 if (!canSend)
                 {
-                    sendTimes = await this.Storage.GetAreadySendTimes(receiver, bizFlag).ConfigureAwait(false);
+                    sendTimes = await this.Storage.GetAreadySendTimesAsync(receiver, bizFlag).ConfigureAwait(false);
                     canSend = sendTimes < maxSendLimit.MaxLimit;
                 }
                 if (canSend)
                 {
                     result = SendResult.FailInSend;
-                    if (await this.Sender.Send(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false)
-                        && await this.Storage.SetCode(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false))
+                    if (await this.Sender.SendAsync(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false)
+                        && await this.Storage.SetCodeAsync(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false))
                     {
                         result = SendResult.Success;
                         if (maxSendLimit != null)
                         {
                             if (sendTimes == 0)
                             {
-                                await this.Storage.SetPeriod(receiver, bizFlag, maxSendLimit.Period).ConfigureAwait(false);
+                                await this.Storage.SetPeriodAsync(receiver, bizFlag, maxSendLimit.Period).ConfigureAwait(false);
                             }
                             else
                             {
-                                await this.Storage.IncreaseSendTimes(receiver, bizFlag).ConfigureAwait(false);
+                                await this.Storage.IncreaseSendTimesAsync(receiver, bizFlag).ConfigureAwait(false);
                             }
                         }
                     }
@@ -80,11 +80,12 @@ namespace CheckCodeHelper
         /// <param name="bizFlag">业务标志</param>
         /// <param name="code">校验码</param>
         /// <param name="maxErrorLimit">最大允许错误次数</param>
-        /// <returns></returns>
-        public async Task<VerificationResult> VerifyCode(string receiver, string bizFlag, string code, int maxErrorLimit)
+        /// <param name="resetWhileRight">当验证通过时，是否重置周期次数限制，默认false</param>
+        /// <returns>验证结果</returns>
+        public async Task<VerificationResult> VerifyCodeAsync(string receiver, string bizFlag, string code, int maxErrorLimit, bool resetWhileRight = false)
         {
             var result = VerificationResult.Expired;
-            var vCode = await this.Storage.GetEffectiveCode(receiver, bizFlag).ConfigureAwait(false);
+            var vCode = await this.Storage.GetEffectiveCodeAsync(receiver, bizFlag).ConfigureAwait(false);
             if (vCode != null && !string.IsNullOrWhiteSpace(vCode.Item1))
             {
                 result = VerificationResult.MaxErrorLimit;
@@ -94,7 +95,11 @@ namespace CheckCodeHelper
                     if (!string.Equals(vCode.Item1, code, StringComparison.OrdinalIgnoreCase))
                     {
                         result = VerificationResult.VerificationFailed;
-                        await this.Storage.IncreaseCodeErrors(receiver, bizFlag).ConfigureAwait(false);
+                        await this.Storage.IncreaseCodeErrorsAsync(receiver, bizFlag).ConfigureAwait(false);
+                    }
+                    else if(resetWhileRight)
+                    {
+                        await this.Storage.RemovePeriodAsync(receiver, bizFlag);
                     }
                 }
             }

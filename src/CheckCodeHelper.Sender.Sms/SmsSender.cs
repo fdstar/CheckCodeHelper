@@ -48,7 +48,7 @@ namespace CheckCodeHelper.Sender.Sms
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
         /// <returns></returns>
-        public virtual async Task<bool> Send(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
+        public virtual async Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
         {
             var content = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime);
             var ret = await this.Sms.SendMessageAsync(receiver, content).ConfigureAwait(false);

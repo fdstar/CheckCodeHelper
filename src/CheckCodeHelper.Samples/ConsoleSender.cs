@@ -18,7 +18,7 @@ namespace CheckCodeHelper.Samples
 
         public bool IsSupport(string receiver) => true;
 
-        public Task<bool> Send(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
+        public Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
         {
             var content = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime);
             Console.WriteLine("发送内容：{0}", content);

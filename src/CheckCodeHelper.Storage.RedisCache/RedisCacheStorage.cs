@@ -43,13 +43,13 @@ namespace CheckCodeHelper.Storage.RedisCache
         /// <param name="receiver"></param>
         /// <param name="bizFlag"></param>
         /// <returns></returns>
-        public async Task<int> GetAreadySendTimes(string receiver, string bizFlag)
+        public async Task<int> GetAreadySendTimesAsync(string receiver, string bizFlag)
         {
             var db = this.GetDatabase();
             var key = this.GetPeriodKey(receiver, bizFlag);
             var times = await db.HashGetAsync<int>(key, PeriodHashKey).ConfigureAwait(false);
 #if DEBUG
-            Console.WriteLine("Method:{0} Result:{1}", nameof(GetAreadySendTimes), times);
+            Console.WriteLine("Method:{0} Result:{1}", nameof(GetAreadySendTimesAsync), times);
 #endif
             return times;
         }
@@ -59,7 +59,7 @@ namespace CheckCodeHelper.Storage.RedisCache
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
         /// <returns></returns>
-        public async Task<Tuple<string, int>> GetEffectiveCode(string receiver, string bizFlag)
+        public async Task<Tuple<string, int>> GetEffectiveCodeAsync(string receiver, string bizFlag)
         {
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
@@ -71,7 +71,7 @@ namespace CheckCodeHelper.Storage.RedisCache
                 var code = dic[CodeValueHashKey];
                 int.TryParse(dic[CodeErrorHashKey], out int errors);
 #if DEBUG
-                Console.WriteLine("Method:{0} Result:  Code {1} Errors {2} ", nameof(GetEffectiveCode), code, errors);
+                Console.WriteLine("Method:{0} Result:  Code {1} Errors {2} ", nameof(GetEffectiveCodeAsync), code, errors);
 #endif
                 return Tuple.Create(code, errors);
             }
@@ -83,7 +83,7 @@ namespace CheckCodeHelper.Storage.RedisCache
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
         /// <returns></returns>
-        public async Task IncreaseCodeErrors(string receiver, string bizFlag)
+        public async Task IncreaseCodeErrorsAsync(string receiver, string bizFlag)
         {
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
@@ -98,7 +98,7 @@ namespace CheckCodeHelper.Storage.RedisCache
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
         /// <returns></returns>
-        public async Task IncreaseSendTimes(string receiver, string bizFlag)
+        public async Task IncreaseSendTimesAsync(string receiver, string bizFlag)
         {
             var db = this.GetDatabase();
             var key = this.GetPeriodKey(receiver, bizFlag);
@@ -115,7 +115,7 @@ namespace CheckCodeHelper.Storage.RedisCache
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
         /// <returns></returns>
-        public async Task<bool> SetCode(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
+        public async Task<bool> SetCodeAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
         {
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
@@ -124,7 +124,7 @@ namespace CheckCodeHelper.Storage.RedisCache
             await db.HashSetAsync(key, CodeTimeHashKey, DateTimeOffset.Now.ToUnixTimeMilliseconds()).ConfigureAwait(false);
             var ret = await db.UpdateExpiryAsync(key, effectiveTime).ConfigureAwait(false);
 #if DEBUG
-            Console.WriteLine("Method:{0} Result:{1}", nameof(SetCode), ret);
+            Console.WriteLine("Method:{0} Result:{1}", nameof(SetCodeAsync), ret);
 #endif
             return ret;
         }
@@ -135,7 +135,7 @@ namespace CheckCodeHelper.Storage.RedisCache
         /// <param name="bizFlag">业务标志</param>
         /// <param name="period">周期时间范围</param>
         /// <returns></returns>
-        public async Task<bool> SetPeriod(string receiver, string bizFlag, TimeSpan? period)
+        public async Task<bool> SetPeriodAsync(string receiver, string bizFlag, TimeSpan? period)
         {
             var db = this.GetDatabase();
             var key = this.GetPeriodKey(receiver, bizFlag);
@@ -146,9 +146,21 @@ namespace CheckCodeHelper.Storage.RedisCache
                 ret = await db.UpdateExpiryAsync(key, period.Value);
             }
 #if DEBUG
-            Console.WriteLine("Method:{0} Result:{1}", nameof(SetPeriod), ret);
+            Console.WriteLine("Method:{0} Result:{1}", nameof(SetPeriodAsync), ret);
 #endif
             return ret;
+        }
+        /// <summary>
+        /// 移除周期限制（适用于登录成功后，错误次数限制重新开始计时的场景）
+        /// </summary>
+        /// <param name="receiver">接收方</param>
+        /// <param name="bizFlag">业务标志</param>
+        /// <returns>执行结果</returns>
+        public async Task RemovePeriodAsync(string receiver, string bizFlag)
+        {
+            var db = this.GetDatabase();
+            var key = this.GetPeriodKey(receiver, bizFlag);
+            await db.RemoveAsync(key).ConfigureAwait(false);
         }
         /// <summary>
         /// 组织Redis键值
@@ -179,7 +191,7 @@ namespace CheckCodeHelper.Storage.RedisCache
         /// <param name="receiver"></param>
         /// <param name="bizFlag"></param>
         /// <returns></returns>
-        public async Task<DateTime?> GetLastSetCodeTime(string receiver, string bizFlag)
+        public async Task<DateTime?> GetLastSetCodeTimeAsync(string receiver, string bizFlag)
         {
             DateTime? dt = null;
             var db = this.GetDatabase();

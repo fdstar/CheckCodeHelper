@@ -28,7 +28,7 @@ namespace CheckCodeHelper
         /// <param name="bizFlag">业务标志</param>
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
-        /// <returns></returns>
-        Task<bool> Send(string receiver, string bizFlag, string code, TimeSpan effectiveTime);
+        /// <returns>发送结果</returns>
+        Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime);
     }
 }

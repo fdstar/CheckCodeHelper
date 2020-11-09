@@ -43,7 +43,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <param name="receiver"></param>
         /// <param name="bizFlag"></param>
         /// <returns></returns>
-        public Task<int> GetAreadySendTimes(string receiver, string bizFlag)
+        public Task<int> GetAreadySendTimesAsync(string receiver, string bizFlag)
         {
             var key = this.GetPeriodKey(receiver, bizFlag);
             int times = 0;
@@ -53,7 +53,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
                 times = storage.Number;
             }
 #if DEBUG
-            Console.WriteLine("Method:{0} Result:{1}", nameof(GetAreadySendTimes), times);
+            Console.WriteLine("Method:{0} Result:{1}", nameof(GetAreadySendTimesAsync), times);
 #endif
             return Task.FromResult(times);
         }
@@ -63,7 +63,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
         /// <returns></returns>
-        public Task<Tuple<string, int>> GetEffectiveCode(string receiver, string bizFlag)
+        public Task<Tuple<string, int>> GetEffectiveCodeAsync(string receiver, string bizFlag)
         {
             Tuple<string, int> tuple = null;
             var key = this.GetCodeKey(receiver, bizFlag);
@@ -72,7 +72,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
             {
                 tuple = Tuple.Create(storage.Code, storage.Number);
 #if DEBUG
-                Console.WriteLine("Method:{0} Result:  Code {1} Errors {2} ", nameof(GetEffectiveCode), storage.Code, storage.Number);
+                Console.WriteLine("Method:{0} Result:  Code {1} Errors {2} ", nameof(GetEffectiveCodeAsync), storage.Code, storage.Number);
 #endif
             }
             return Task.FromResult(tuple);
@@ -83,7 +83,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
         /// <returns></returns>
-        public Task IncreaseCodeErrors(string receiver, string bizFlag)
+        public Task IncreaseCodeErrorsAsync(string receiver, string bizFlag)
         {
             var key = this.GetCodeKey(receiver, bizFlag);
             this.Cache.TryGetValue(key, out CodeStorage storage);
@@ -99,7 +99,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
         /// <returns></returns>
-        public Task IncreaseSendTimes(string receiver, string bizFlag)
+        public Task IncreaseSendTimesAsync(string receiver, string bizFlag)
         {
             var key = this.GetPeriodKey(receiver, bizFlag);
             this.Cache.TryGetValue(key, out CodeStorage storage);
@@ -117,7 +117,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
         /// <returns></returns>
-        public Task<bool> SetCode(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
+        public Task<bool> SetCodeAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
         {
             var storage = new CodeStorage
             {
@@ -136,7 +136,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <param name="bizFlag">业务标志</param>
         /// <param name="period">周期时间范围</param>
         /// <returns></returns>
-        public Task<bool> SetPeriod(string receiver, string bizFlag, TimeSpan? period)
+        public Task<bool> SetPeriodAsync(string receiver, string bizFlag, TimeSpan? period)
         {
             var storage = new CodeStorage
             {
@@ -145,6 +145,18 @@ namespace CheckCodeHelper.Storage.MemoryCache
             var key = this.GetPeriodKey(receiver, bizFlag);
             this.SetCache(key, storage, period);
             return Task.FromResult(true);
+        }
+        /// <summary>
+        /// 移除周期限制（适用于登录成功后，错误次数限制重新开始计时的场景）
+        /// </summary>
+        /// <param name="receiver">接收方</param>
+        /// <param name="bizFlag">业务标志</param>
+        /// <returns>执行结果</returns>
+        public Task RemovePeriodAsync(string receiver, string bizFlag)
+        {
+            var key = this.GetPeriodKey(receiver, bizFlag);
+            this.Cache.Remove(key);
+            return Task.CompletedTask;
         }
         private void SetCache(string key, CodeStorage storage, TimeSpan? absoluteToNow)
         {
@@ -180,7 +192,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <param name="receiver"></param>
         /// <param name="bizFlag"></param>
         /// <returns></returns>
-        public Task<DateTime?> GetLastSetCodeTime(string receiver, string bizFlag)
+        public Task<DateTime?> GetLastSetCodeTimeAsync(string receiver, string bizFlag)
         {
             DateTime? dt = null;
             var key = this.GetCodeKey(receiver, bizFlag);

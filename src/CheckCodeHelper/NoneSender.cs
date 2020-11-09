@@ -29,7 +29,7 @@ namespace CheckCodeHelper
         /// <param name="code"></param>
         /// <param name="effectiveTime"></param>
         /// <returns></returns>
-        public Task<bool> Send(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
+        public Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
             => Task.FromResult(true);
     }
 }

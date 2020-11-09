@@ -48,7 +48,7 @@ namespace CheckCodeHelper.Samples
             {
                 //ICodeStorage.GetLastSetCodeTime用于获取最后一次发送校验码时间
                 //用于比如手机验证码发送后，用户刷新页面时，页面上用于按钮倒计时计数的计算
-                var time = storage.GetLastSetCodeTime(receiver, bizFlag).Result;
+                var time = storage.GetLastSetCodeTimeAsync(receiver, bizFlag).Result;
                 if (time.HasValue)
                 {
                     Console.WriteLine("上次发送时间：{0:yy-MM-dd HH:mm:ss.fff}", time.Value);
@@ -60,7 +60,7 @@ namespace CheckCodeHelper.Samples
             };
             getTimeAction();
 
-            var sendResult = helper.SendCode(receiver, bizFlag, code, effectiveTime, new PeriodLimit
+            var sendResult = helper.SendCodeAsync(receiver, bizFlag, code, effectiveTime, new PeriodLimit
             {
                 //设置周期为20分钟，然后在此段时间内最多允许发送验证码5次
                 MaxLimit = 5,
@@ -77,7 +77,7 @@ namespace CheckCodeHelper.Samples
                     var vCode = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(vCode)) continue;
                     getTimeAction();
-                    var vResult = helper.VerifyCode(receiver, bizFlag, vCode, 3).Result;
+                    var vResult = helper.VerifyCodeAsync(receiver, bizFlag, vCode, 3).Result;
                     Console.WriteLine("{2:yy-MM-dd HH:mm:ss }校验码 {0} 校验结果：{1}", vCode, vResult, DateTime.Now);
                     if (vResult != VerificationResult.VerificationFailed)
                     {
