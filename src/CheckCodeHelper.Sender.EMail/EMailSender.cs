@@ -15,6 +15,10 @@ namespace CheckCodeHelper.Sender.EMail
     public class EMailSender : ICodeSender
     {
         /// <summary>
+        /// 默认设置的<see cref="Key"/>
+        /// </summary>
+        public const string DefaultKey = "EMAIL";
+        /// <summary>
         /// 通过短信发送验证码
         /// </summary>
         /// <param name="formatter">验证码内容模板</param>
@@ -30,6 +34,10 @@ namespace CheckCodeHelper.Sender.EMail
         /// 发送验证码内容模板
         /// </summary>
         public IContentFormatter Formatter { get; }
+        /// <summary>
+        /// 用于标志当前sender的唯一Key
+        /// </summary>
+        public string Key { get; set; } = DefaultKey;
         /// <summary>
         /// 邮件发送者
         /// </summary>

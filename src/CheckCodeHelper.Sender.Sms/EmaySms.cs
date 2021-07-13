@@ -29,8 +29,7 @@ namespace CheckCodeHelper.Sender.Sms
         /// <param name="host">亿美短信服务Host</param>
         /// <param name="appId">亿美短信应用Id</param>
         /// <param name="secretKey">亿美短信应用秘钥</param>
-        /// <param name="scheme">传输协议</param>
-        public EmaySms(string host, string appId, string secretKey, string scheme = "http")
+        public EmaySms(string host, string appId, string secretKey)
         {
             if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(appId) || string.IsNullOrWhiteSpace(secretKey))
             {
@@ -40,7 +39,7 @@ namespace CheckCodeHelper.Sender.Sms
             var key = new byte[16];
             Array.Copy(Encoding.UTF8.GetBytes(secretKey.PadRight(key.Length)), key, key.Length);
             this._secretKey = key;
-            this.Client = new RestClient(string.Format("{0}://{1}", scheme, host));
+            this.Client = new RestClient(host);
         }
         /// <summary>
         /// 请求有效期（秒），默认60
@@ -62,13 +61,7 @@ namespace CheckCodeHelper.Sender.Sms
                 rawData = GZipHelper.Compress(rawData);
             }
             var encryptData = AESHelper.Encrypt(rawData, this._secretKey, null, CipherMode.ECB, PaddingMode.PKCS7);
-            request.AddParameter(new Parameter
-            {
-                Type = ParameterType.RequestBody,
-                DataFormat = DataFormat.None,
-                Value = encryptData,
-                Name = ""
-            });
+            request.AddParameter("", encryptData, ParameterType.RequestBody);
             return request;
         }
         private object GetSingleSmsObj(string mobile, string content, string bizId, DateTime? sendTime)
@@ -130,7 +123,7 @@ namespace CheckCodeHelper.Sender.Sms
             var data = this.GetSingleSmsObj(mobile, content, bizId, sendTime);
             var useGZip = this.UseGzip;
             var request = this.GetRestRequest(data, SendSingleSmsUrl, useGZip);
-            var response = await this.Client.ExecuteTaskAsync(request).ConfigureAwait(false);
+            var response = await this.Client.ExecuteAsync(request).ConfigureAwait(false);
             return this.IsResponseSuccess(response, useGZip);
         }
         /// <summary>
@@ -191,7 +184,7 @@ namespace CheckCodeHelper.Sender.Sms
             var data = this.GetBatchSMSObj(content, mobiles, bizIds, sendTime);
             var useGZip = this.UseGzip;
             var request = this.GetRestRequest(data, SendBatchSmsUrl, useGZip);
-            var response = await this.Client.ExecuteTaskAsync(request).ConfigureAwait(false);
+            var response = await this.Client.ExecuteAsync(request).ConfigureAwait(false);
             return this.IsResponseSuccess(response, useGZip);
         }
     }

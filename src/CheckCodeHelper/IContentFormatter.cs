@@ -18,8 +18,9 @@ namespace CheckCodeHelper
         /// <param name="bizFlag">业务标志</param>
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
         /// <returns></returns>
-        string GetContent(string receiver, string bizFlag, string code, TimeSpan effectiveTime);
+        string GetContent(string receiver, string bizFlag, string code, TimeSpan effectiveTime, string senderKey = null);
     }
     /// <summary>
     /// 基于业务标志的多内容模板
@@ -30,13 +31,15 @@ namespace CheckCodeHelper
         /// 设置指定业务对应的内容模板
         /// </summary>
         /// <param name="bizFlag">业务标志</param>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
         /// <param name="formatter">内容模板</param>
-        void SetFormatter(string bizFlag, IContentFormatter formatter);
+        void SetFormatter(string bizFlag, string senderKey, IContentFormatter formatter);
         /// <summary>
         /// 移除指定业务对应的内容模板，如果没有，则返回null
         /// </summary>
         /// <param name="bizFlag">业务标志</param>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
         /// <returns></returns>
-        IContentFormatter RemoveFormatter(string bizFlag);
+        IContentFormatter RemoveFormatter(string bizFlag, string senderKey);
     }
 }

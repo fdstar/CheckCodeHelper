@@ -38,7 +38,11 @@ namespace CheckCodeHelper.Samples
         {
             if (sender == null)
             {
-                sender = new ConsoleSender(GetFormatter(bizFlag)); 
+                var senderKey = "CONSOLE";
+                sender = new ConsoleSender(GetFormatter(bizFlag, senderKey))
+                {
+                    Key = senderKey,
+                };
             }
 
             var helper = new CodeHelper(sender, storage);
@@ -99,7 +103,7 @@ namespace CheckCodeHelper.Samples
                 UserAddress = "",//填入发送邮件的邮箱地址
             };
             string func(string b) => "找回密码验证码测试邮件";
-            var sender = new EMailSender(GetFormatter(bizFlag), setting, func)
+            var sender = new EMailSender(GetFormatter(bizFlag, EMailSender.DefaultKey), setting, func)
             {
                 TextFormat = MimeKit.Text.TextFormat.Plain//设置发送的邮件内容格式
             };
@@ -112,18 +116,18 @@ namespace CheckCodeHelper.Samples
             string appid = "11";//填入亿美appid
             string secretKey = "22"; //填入亿美secretKey
             ISms sms = new EmaySms(host, appid, secretKey);
-            var sender = new SmsSender(GetFormatter(bizFlag), sms);
+            var sender = new SmsSender(GetFormatter(bizFlag, SmsSender.DefaultKey), sms);
             return sender;
         }
         #endregion
         #region IContentFormatter
-        private static IContentFormatter GetFormatter(string bizFlag)
+        private static IContentFormatter GetFormatter(string bizFlag,string senderKey)
         {
             var simpleFormatter = new ContentFormatter(
-                    (r, b, c, e) => $"{r}您好，您的忘记密码验证码为{c}，有效期为{(int)e.TotalSeconds}秒.");
+                    (r, b, c, e, s) => $"{r}您好，您的忘记密码验证码为{c}，有效期为{(int)e.TotalSeconds}秒.");
             //如果就一个业务场景，也可以直接返回simpleFormatter
             var formatter = new ComplexContentFormatter();
-            formatter.SetFormatter(bizFlag, simpleFormatter);
+            formatter.SetFormatter(bizFlag, senderKey, simpleFormatter);
             return formatter;
         }
         #endregion

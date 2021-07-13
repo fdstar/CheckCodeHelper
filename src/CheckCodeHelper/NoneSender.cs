@@ -12,9 +12,17 @@ namespace CheckCodeHelper
     public class NoneSender : ICodeSender
     {
         /// <summary>
+        /// 默认设置的<see cref="Key"/>
+        /// </summary>
+        public const string DefaultKey = "NONE";
+        /// <summary>
         /// 发送校验码内容模板 因为此实现适用场景无需发送验证码，所以此处会返回<see cref="NotImplementedException"/>
         /// </summary>
         public IContentFormatter Formatter => throw new NotImplementedException();
+        /// <summary>
+        /// 用于标志当前sender的唯一Key
+        /// </summary>
+        public string Key { get; set; } = DefaultKey;
         /// <summary>
         /// 判断接收者是否符合发送条件，当前实现永远返回true
         /// </summary>

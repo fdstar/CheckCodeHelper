@@ -11,12 +11,12 @@ namespace CheckCodeHelper
     /// </summary>
     public class ContentFormatter : IContentFormatter
     {
-        private readonly Func<string, string, string, TimeSpan, string> _func;
+        private readonly Func<string, string, string, TimeSpan, string, string> _func;
         /// <summary>
         /// 通用实现，这样就无需每种业务类型都要实现<see cref="IContentFormatter"/>
         /// </summary>
-        /// <param name="func">传递的委托，参数顺序与<see cref="GetContent(string, string, string, TimeSpan)"/>一致</param>
-        public ContentFormatter(Func<string, string, string, TimeSpan, string> func)
+        /// <param name="func">传递的委托，参数顺序与<see cref="GetContent(string, string, string, TimeSpan,string)"/>一致</param>
+        public ContentFormatter(Func<string, string, string, TimeSpan, string, string> func)
         {
             this._func = func ?? throw new ArgumentNullException(nameof(func));
         }
@@ -27,10 +27,11 @@ namespace CheckCodeHelper
         /// <param name="bizFlag">业务标志</param>
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
         /// <returns></returns>
-        public string GetContent(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
+        public string GetContent(string receiver, string bizFlag, string code, TimeSpan effectiveTime, string senderKey = null)
         {
-            return this._func.Invoke(receiver, bizFlag, code, effectiveTime);
+            return this._func.Invoke(receiver, bizFlag, code, effectiveTime, senderKey);
         }
     }
 }

@@ -16,11 +16,13 @@ namespace CheckCodeHelper.Samples
         }
         public IContentFormatter Formatter { get; }
 
+        public string Key { get; set; }
+
         public bool IsSupport(string receiver) => true;
 
         public Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
         {
-            var content = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime);
+            var content = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime, this.Key);
             Console.WriteLine("发送内容：{0}", content);
             return Task.FromResult(true);
         }

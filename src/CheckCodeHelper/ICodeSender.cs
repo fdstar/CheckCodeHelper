@@ -16,6 +16,10 @@ namespace CheckCodeHelper
         /// </summary>
         IContentFormatter Formatter { get; }
         /// <summary>
+        /// 用于标志当前sender的唯一Key
+        /// </summary>
+        string Key { get; set; }
+        /// <summary>
         /// 判断接收者是否符合发送条件，例如当前发送者只支持邮箱，而接收方为手机号，则返回结果应当为false
         /// </summary>
         /// <param name="receiver">接收方</param>

@@ -17,23 +17,29 @@ namespace CheckCodeHelper
         /// 设置指定业务对应的内容模板
         /// </summary>
         /// <param name="bizFlag">业务标志</param>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
         /// <param name="formatter">内容模板</param>
-        public void SetFormatter(string bizFlag, IContentFormatter formatter)
+        public void SetFormatter(string bizFlag, string senderKey, IContentFormatter formatter)
         {
             if (!string.IsNullOrWhiteSpace(bizFlag) && formatter != null)
             {
-                this._dic.AddOrUpdate(bizFlag, formatter, (k, v) => formatter);
+                this._dic.AddOrUpdate(this.GetKey(bizFlag, senderKey), formatter, (k, v) => formatter);
             }
+        }
+        private string GetKey(string bizFlag, string senderKey)
+        {
+            return $"{bizFlag}_{senderKey}";
         }
         /// <summary>
         /// 移除指定业务对应的内容模板，如果没有，则返回null
         /// </summary>
         /// <param name="bizFlag">业务标志</param>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
         /// <returns></returns>
-        public IContentFormatter RemoveFormatter(string bizFlag)
+        public IContentFormatter RemoveFormatter(string bizFlag, string senderKey)
         {
             if (!string.IsNullOrWhiteSpace(bizFlag)
-                && this._dic.TryRemove(bizFlag, out IContentFormatter formatter))
+                && this._dic.TryRemove(this.GetKey(bizFlag, senderKey), out IContentFormatter formatter))
             {
                 return formatter;
             }
@@ -46,19 +52,20 @@ namespace CheckCodeHelper
         /// <param name="bizFlag">业务标志</param>
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
         /// <returns></returns>
-        public string GetContent(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
+        public string GetContent(string receiver, string bizFlag, string code, TimeSpan effectiveTime, string senderKey)
         {
             if (string.IsNullOrWhiteSpace(bizFlag))
             {
                 throw new ArgumentNullException(nameof(bizFlag));
             }
-            this._dic.TryGetValue(bizFlag, out IContentFormatter formatter);
+            this._dic.TryGetValue(this.GetKey(bizFlag, senderKey), out IContentFormatter formatter);
             if (formatter == null)
             {
                 throw new KeyNotFoundException(nameof(formatter));
             }
-            return formatter.GetContent(receiver, bizFlag, code, effectiveTime);
+            return formatter.GetContent(receiver, bizFlag, code, effectiveTime, senderKey);
         }
     }
 }

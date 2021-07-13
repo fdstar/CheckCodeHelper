@@ -13,6 +13,10 @@ namespace CheckCodeHelper.Sender.Sms
     public class SmsSender : ICodeSender
     {
         /// <summary>
+        /// 默认设置的<see cref="Key"/>
+        /// </summary>
+        public const string DefaultKey = "SMS";
+        /// <summary>
         /// 通过短信发送验证码
         /// </summary>
         /// <param name="formatter">验证码内容模板</param>
@@ -26,6 +30,10 @@ namespace CheckCodeHelper.Sender.Sms
         /// 发送验证码内容模板
         /// </summary>
         public IContentFormatter Formatter { get; }
+        /// <summary>
+        /// 用于标志当前sender的唯一Key
+        /// </summary>
+        public string Key { get; set; } = DefaultKey;
         /// <summary>
         /// 短信发送接口
         /// </summary>
@@ -50,7 +58,7 @@ namespace CheckCodeHelper.Sender.Sms
         /// <returns></returns>
         public virtual async Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
         {
-            var content = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime);
+            var content = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime, this.Key);
             var ret = await this.Sms.SendMessageAsync(receiver, content).ConfigureAwait(false);
             return ret;
         }
