@@ -104,7 +104,8 @@ namespace CheckCodeHelper.Samples
                 UserAddress = "",//填入发送邮件的邮箱地址
             };
             string func(string b) => "找回密码验证码测试邮件";
-            var sender = new EMailSender(GetFormatter(bizFlag, EMailSender.DefaultKey), setting, func)
+            var helper = new EMailHelper(Options.Create(setting));
+            var sender = new EMailSender(GetFormatter(bizFlag, EMailSender.DefaultKey), helper, func)
             {
                 TextFormat = MimeKit.Text.TextFormat.Plain//设置发送的邮件内容格式
             };

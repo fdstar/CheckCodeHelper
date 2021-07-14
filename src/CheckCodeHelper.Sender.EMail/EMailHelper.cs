@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace CheckCodeHelper.Sender.EMail
 {
+#if NETSTANDARD2_0_OR_GREATER
+    using Microsoft.Extensions.Options;
+#endif
     /// <summary>
     /// 发送邮件辅助类
     /// </summary>
@@ -18,11 +21,28 @@ namespace CheckCodeHelper.Sender.EMail
         /// 邮箱配置
         /// </summary>
         public EMailSetting Setting { get; }
+
+#if NETSTANDARD2_0_OR_GREATER
+        /// <summary>
+        /// 邮件发送设置
+        /// </summary>
+        /// <param name="option"></param>
+        public EMailHelper(IOptions<EMailSetting> option)
+            : this(option.Value)
+        {
+        }
+#endif
+
         /// <summary>
         /// 邮件发送设置
         /// </summary>
         /// <param name="setting"></param>
-        public EMailHelper(EMailSetting setting)
+#if NETSTANDARD2_0_OR_GREATER
+        private
+#else
+        public
+#endif
+            EMailHelper(EMailSetting setting)
         {
             this.Setting = setting ?? throw new ArgumentNullException(nameof(setting));
         }
@@ -74,7 +94,7 @@ namespace CheckCodeHelper.Sender.EMail
         /// <param name="bccAddress">密送方信息</param>
         /// <param name="dispose">是否自动释放附件所用Stream</param>
         /// <returns></returns>
-        public async Task SendEMailAsync(string subject, string content, IEnumerable<MailboxAddress> fromAddress, IEnumerable<MailboxAddress> toAddress, TextFormat textFormat = TextFormat.Text, IEnumerable<AttachmentInfo> attachments = null, IEnumerable<MailboxAddress> ccAddress=null, IEnumerable<MailboxAddress> bccAddress = null, bool dispose = true)
+        public async Task SendEMailAsync(string subject, string content, IEnumerable<MailboxAddress> fromAddress, IEnumerable<MailboxAddress> toAddress, TextFormat textFormat = TextFormat.Text, IEnumerable<AttachmentInfo> attachments = null, IEnumerable<MailboxAddress> ccAddress = null, IEnumerable<MailboxAddress> bccAddress = null, bool dispose = true)
         {
             var message = new MimeMessage();
             message.From.AddRange(fromAddress);

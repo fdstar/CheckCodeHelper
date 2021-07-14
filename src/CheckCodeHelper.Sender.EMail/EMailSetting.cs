@@ -32,7 +32,7 @@ namespace CheckCodeHelper.Sender.EMail
         /// </summary>
         public string UserAddress { get; set; }
         /// <summary>
-        /// 发现邮件所需的账号密码
+        /// 发送邮件所需的账号密码
         /// </summary>
         public string Password { get; set; }
     }

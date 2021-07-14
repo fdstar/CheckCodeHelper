@@ -18,8 +18,22 @@ namespace CheckCodeHelper.Sender.EMail
         /// 默认设置的<see cref="Key"/>
         /// </summary>
         public const string DefaultKey = "EMAIL";
+#if NETSTANDARD2_0_OR_GREATER
         /// <summary>
-        /// 通过短信发送验证码
+        /// 通过邮件发送验证码
+        /// </summary>
+        /// <param name="formatter">验证码内容模板</param>
+        /// <param name="helper">邮件发送者</param>
+        /// <param name="subjectFunc">根据业务标志返回对应的邮件主题</param>
+        public EMailSender(IContentFormatter formatter, EMailHelper helper, Func<string, string> subjectFunc)
+        {
+            this.Formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
+            this.EMailHelper = helper ?? throw new ArgumentNullException(nameof(helper));
+            this.SubjectFunc = subjectFunc ?? throw new ArgumentNullException(nameof(subjectFunc));
+        }
+#else
+        /// <summary>
+        /// 通过邮件发送验证码
         /// </summary>
         /// <param name="formatter">验证码内容模板</param>
         /// <param name="setting">邮箱配置</param>
@@ -30,6 +44,7 @@ namespace CheckCodeHelper.Sender.EMail
             this.SubjectFunc = subjectFunc ?? throw new ArgumentNullException(nameof(subjectFunc));
             this.EMailHelper = new EMailHelper(setting ?? throw new ArgumentNullException(nameof(setting)));
         }
+#endif
         /// <summary>
         /// 发送验证码内容模板
         /// </summary>
