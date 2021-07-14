@@ -183,7 +183,7 @@ namespace CheckCodeHelper.Sender.Sms
         /// <returns></returns>
         public bool SendMessageBatch(string content, IList<string> mobiles, IList<string> bizIds = null, DateTime? sendTime = null)
         {
-            return this.CallApi(SendSingleSmsUrl, () => this.GetBatchSMSObj(content, mobiles, bizIds, sendTime));
+            return this.CallApi(SendBatchSmsUrl, () => this.GetBatchSMSObj(content, mobiles, bizIds, sendTime));
         }
         private object GetBatchSMSObj(string content, IList<string> mobiles, IList<string> bizIds, DateTime? sendTime)
         {
@@ -224,7 +224,7 @@ namespace CheckCodeHelper.Sender.Sms
         /// <returns></returns>
         public async Task<bool> SendMessageBatchAsync(string content, IList<string> mobiles, IList<string> bizIds = null, DateTime? sendTime = null)
         {
-            return await this.CallApiAsync(SendSingleSmsUrl, () => this.GetBatchSMSObj(content, mobiles, bizIds, sendTime));
+            return await this.CallApiAsync(SendBatchSmsUrl, () => this.GetBatchSMSObj(content, mobiles, bizIds, sendTime));
         }
     }
 
