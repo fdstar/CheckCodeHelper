@@ -12,6 +12,10 @@ namespace CheckCodeHelper.Sender.Sms
     public interface ISms
     {
         /// <summary>
+        /// 如果存在多供应商或多账号时，可用于区分唯一Key值
+        /// </summary>
+        string Key { get; set; }
+        /// <summary>
         /// 发送单条短信
         /// </summary>
         /// <param name="mobile">手机号</param>

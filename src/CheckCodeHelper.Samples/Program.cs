@@ -3,6 +3,7 @@ using CheckCodeHelper.Sender.Sms;
 using CheckCodeHelper.Storage.MemoryCache;
 using CheckCodeHelper.Storage.Redis;
 using CheckCodeHelper.Storage.RedisCache;
+using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using StackExchange.Redis.Extensions.Core.Configuration;
@@ -112,10 +113,15 @@ namespace CheckCodeHelper.Samples
         private static ICodeSender GetSmsSender()
         {
             //此处以亿美为例
-            string host = "shmtn.b2m.cn:80";
+            string host = "http://shmtn.b2m.cn:80";
             string appid = "11";//填入亿美appid
             string secretKey = "22"; //填入亿美secretKey
-            ISms sms = new EmaySms(host, appid, secretKey);
+            ISms sms = new EmaySms(Options.Create(new EmaySetting
+            {
+                Host = host,
+                AppId = appid,
+                SecretKey = secretKey
+            }));
             var sender = new SmsSender(GetFormatter(bizFlag, SmsSender.DefaultKey), sms);
             return sender;
         }
