@@ -18,11 +18,11 @@ namespace CheckCodeHelper.Storage.Redis
         /// <summary>
         /// Code缓存Key值前缀
         /// </summary>
-        public string CodeKeyPrefix { get; set; } = "CC1";
+        public string CodeKeyPrefix { get; set; } = "CK";
         /// <summary>
         /// Period缓存Key值前缀
         /// </summary>
-        public string PeriodKeyPrefix { get; set; } = "CCT1";
+        public string PeriodKeyPrefix { get; set; } = "PK";
         /// <summary>
         /// 缓存写入Redis哪个库
         /// </summary>
@@ -199,15 +199,15 @@ namespace CheckCodeHelper.Storage.Redis
         /// <param name="receiver"></param>
         /// <param name="bizFlag"></param>
         /// <returns></returns>
-        public async Task<DateTime?> GetLastSetCodeTimeAsync(string receiver, string bizFlag)
+        public async Task<DateTimeOffset?> GetLastSetCodeTimeAsync(string receiver, string bizFlag)
         {
-            DateTime? dt = null;
+            DateTimeOffset? dt = null;
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
             var value = await db.HashGetAsync(key, CodeTimeHashKey).ConfigureAwait(false);
             if (value.HasValue && value.TryParse(out long ts))
             {
-                dt = DateTimeOffset.FromUnixTimeMilliseconds(ts).ToLocalTime().DateTime;
+                dt = DateTimeOffset.FromUnixTimeMilliseconds(ts);
             }
             return dt;
         }

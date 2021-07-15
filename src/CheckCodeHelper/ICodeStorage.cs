@@ -69,6 +69,6 @@ namespace CheckCodeHelper
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
         /// <returns>获取结果</returns>
-        Task<DateTime?> GetLastSetCodeTimeAsync(string receiver, string bizFlag);
+        Task<DateTimeOffset?> GetLastSetCodeTimeAsync(string receiver, string bizFlag);
     }
 }

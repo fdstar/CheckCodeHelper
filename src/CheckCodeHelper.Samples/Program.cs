@@ -1,6 +1,6 @@
 ﻿using CheckCodeHelper.Sender.EMail;
 using CheckCodeHelper.Sender.Sms;
-using CheckCodeHelper.Storage.MemoryCache;
+using CheckCodeHelper.Storage.Memory;
 using CheckCodeHelper.Storage.Redis;
 using CheckCodeHelper.Storage.RedisCache;
 using Microsoft.Extensions.Options;

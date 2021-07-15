@@ -1,12 +1,16 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿#if NETSTANDARD2_0_OR_GREATER
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+#else
+using System.Runtime.Caching;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckCodeHelper.Storage.MemoryCache
+namespace CheckCodeHelper.Storage.Memory
 {
     /// <summary>
     /// 校验码信息存储到MemoryCache
@@ -16,27 +20,59 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <summary>
         /// Code缓存Key值前缀
         /// </summary>
-        public string CodeKeyPrefix { get; set; } = "CC";
+        public string CodeKeyPrefix { get; set; } = "CK";
         /// <summary>
         /// Period缓存Key值前缀
         /// </summary>
-        public string PeriodKeyPrefix { get; set; } = "CCT";
+        public string PeriodKeyPrefix { get; set; } = "PK";
+
+#if NETSTANDARD2_0_OR_GREATER
         /// <summary>
         /// 基于内存的缓存
         /// </summary>
         public IMemoryCache Cache { get; }
+
         /// <summary>
         /// 缓存优先级，默认<see cref="CacheItemPriority.High"/>
         /// </summary>
         public CacheItemPriority CacheItemPriority { get; set; } = CacheItemPriority.High;
+
         /// <summary>
         /// 基于IMemoryCache的构造函数
         /// </summary>
         /// <param name="cache"></param>
         public MemoryCacheStorage(IMemoryCache cache = null)
         {
-            this.Cache = cache ?? new Microsoft.Extensions.Caching.Memory.MemoryCache(Options.Create(new MemoryCacheOptions()));
+            this.Cache = cache ?? new MemoryCache(Options.Create(new MemoryCacheOptions()));
         }
+#else
+        /// <summary>
+        /// 基于内存的缓存
+        /// </summary>
+        public MemoryCache Cache { get; }
+
+        /// <summary>
+        /// 缓存逐出优先级别，默认<see cref="CacheItemPriority.NotRemovable"/>
+        /// </summary>
+        public CacheItemPriority Priority { get; set; } = CacheItemPriority.NotRemovable;
+
+        /// <summary>
+        /// 基于<see cref="MemoryCache"/>的构造函数
+        /// </summary>
+        /// <param name="cache">用于存储的Cache，如果不传则使用<see cref="MemoryCache.Default"/></param>
+        public MemoryCacheStorage(MemoryCache cache = null)
+        {
+            this.Cache = cache ?? MemoryCache.Default;
+        }
+#endif
+        /// <summary>
+        /// 释放<see cref="Cache"/>
+        /// </summary>
+        ~MemoryCacheStorage()
+        {
+            this.Cache.Dispose();
+        }
+
         /// <summary>
         /// 获取校验码周期内已发送次数，如果周期已到或未发送过任何验证码，则返回0
         /// </summary>
@@ -47,7 +83,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         {
             var key = this.GetPeriodKey(receiver, bizFlag);
             int times = 0;
-            this.Cache.TryGetValue(key, out CodeStorage storage);
+            var storage = this.GetFromCache(key);
             if (storage != null)
             {
                 times = storage.Number;
@@ -67,7 +103,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         {
             Tuple<string, int> tuple = null;
             var key = this.GetCodeKey(receiver, bizFlag);
-            this.Cache.TryGetValue(key, out CodeStorage storage);
+            var storage = this.GetFromCache(key);
             if (storage != null)
             {
                 tuple = Tuple.Create(storage.Code, storage.Number);
@@ -86,12 +122,12 @@ namespace CheckCodeHelper.Storage.MemoryCache
         public Task IncreaseCodeErrorsAsync(string receiver, string bizFlag)
         {
             var key = this.GetCodeKey(receiver, bizFlag);
-            this.Cache.TryGetValue(key, out CodeStorage storage);
+            var storage = this.GetFromCache(key);
             if (storage != null)
             {
                 storage.Number += 1;
             }
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
         /// <summary>
         /// 校验码周期内发送次数+1，如果周期已到，则不进行任何操作
@@ -102,12 +138,12 @@ namespace CheckCodeHelper.Storage.MemoryCache
         public Task IncreaseSendTimesAsync(string receiver, string bizFlag)
         {
             var key = this.GetPeriodKey(receiver, bizFlag);
-            this.Cache.TryGetValue(key, out CodeStorage storage);
+            var storage = this.GetFromCache(key);
             if (storage != null)
             {
                 storage.Number += 1;
             }
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
         /// <summary>
         /// 将校验码进行持久化，如果接收方和业务标志组合已经存在，则进行覆盖
@@ -123,7 +159,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
             {
                 Code = code,
                 Number = 0,
-                StorageTime = DateTime.Now
+                StorageTime = DateTimeOffset.Now
             };
             var key = this.GetCodeKey(receiver, bizFlag);
             this.SetCache(key, storage, effectiveTime);
@@ -156,16 +192,37 @@ namespace CheckCodeHelper.Storage.MemoryCache
         {
             var key = this.GetPeriodKey(receiver, bizFlag);
             this.Cache.Remove(key);
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
         private void SetCache(string key, CodeStorage storage, TimeSpan? absoluteToNow)
         {
+#if NETSTANDARD2_0_OR_GREATER
             var option = new MemoryCacheEntryOptions
             {
                 Priority = this.CacheItemPriority,
                 AbsoluteExpirationRelativeToNow = absoluteToNow
             };
             this.Cache.Set(key, storage, option);
+#else
+            var policy = new CacheItemPolicy
+            {
+                Priority = this.Priority,
+            };
+            if (absoluteToNow.HasValue)
+            {
+                policy.AbsoluteExpiration = DateTimeOffset.Now.Add(absoluteToNow.Value);
+            }
+            this.Cache.Set(key, storage, policy);
+#endif
+        }
+        private CodeStorage GetFromCache(string key)
+        {
+#if NETSTANDARD2_0_OR_GREATER
+            this.Cache.TryGetValue(key, out CodeStorage storage);
+            return storage;
+#else
+            return this.Cache.Get(key) as CodeStorage;
+#endif
         }
         /// <summary>
         /// 组织IMemoryCache键值
@@ -192,11 +249,11 @@ namespace CheckCodeHelper.Storage.MemoryCache
         /// <param name="receiver"></param>
         /// <param name="bizFlag"></param>
         /// <returns></returns>
-        public Task<DateTime?> GetLastSetCodeTimeAsync(string receiver, string bizFlag)
+        public Task<DateTimeOffset?> GetLastSetCodeTimeAsync(string receiver, string bizFlag)
         {
-            DateTime? dt = null;
+            DateTimeOffset? dt = null;
             var key = this.GetCodeKey(receiver, bizFlag);
-            this.Cache.TryGetValue(key, out CodeStorage storage);
+            var storage = this.GetFromCache(key);
             if (storage != null)
             {
                 dt = storage.StorageTime;
@@ -209,7 +266,7 @@ namespace CheckCodeHelper.Storage.MemoryCache
         {
             public string Code { get; set; }
             public int Number { get; set; }
-            public DateTime StorageTime { get; set; }
+            public DateTimeOffset StorageTime { get; set; }
         }
     }
 }

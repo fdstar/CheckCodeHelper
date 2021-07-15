@@ -23,7 +23,7 @@ namespace CheckCodeHelper.Sender.EMail
         /// <returns></returns>
         public static IServiceCollection AddSingletonForEMailSender(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingletonForHelper(configuration);
+            services.AddSingletonForEMailHelper(configuration);
             services.AddSingleton<ICodeSender, EMailSender>();
             return services;
         }
@@ -34,7 +34,7 @@ namespace CheckCodeHelper.Sender.EMail
         /// <param name="services"></param>
         /// <param name="configuration">仅包含<see cref="EMailSetting"/>的配置节点</param>
         /// <returns></returns>
-        public static IServiceCollection AddSingletonForHelper(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddSingletonForEMailHelper(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<EMailSetting>(configuration);
             services.AddSingleton<EMailHelper>();
