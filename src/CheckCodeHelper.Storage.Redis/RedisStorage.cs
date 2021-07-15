@@ -122,7 +122,11 @@ namespace CheckCodeHelper.Storage.Redis
             var ret = await await db.HashSetAsync(key, new HashEntry[] {
                 new HashEntry(CodeValueHashKey,code),
                 new HashEntry(CodeErrorHashKey,0),
+#if NETSTANDARD2_0_OR_GREATER
                 new HashEntry(CodeTimeHashKey,DateTimeOffset.Now.ToUnixTimeMilliseconds())
+#else
+                new HashEntry(CodeTimeHashKey,DateTimeOffsetHelper.ToUnixTimeMilliseconds(DateTimeOffset.Now))
+#endif
             }).ContinueWith(async t =>
             {
                 if (t.IsCompleted)
@@ -207,7 +211,11 @@ namespace CheckCodeHelper.Storage.Redis
             var value = await db.HashGetAsync(key, CodeTimeHashKey).ConfigureAwait(false);
             if (value.HasValue && value.TryParse(out long ts))
             {
+#if NETSTANDARD2_0_OR_GREATER
                 dt = DateTimeOffset.FromUnixTimeMilliseconds(ts);
+#else
+                dt = DateTimeOffsetHelper.FromUnixTimeMilliseconds(ts);
+#endif
             }
             return dt;
         }

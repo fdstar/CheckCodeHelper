@@ -15,7 +15,7 @@ namespace CheckCodeHelper.Storage.Memory
     public static class MemoryExtensions
     {
         /// <summary>
-        /// 注册基于内存的文件存储
+        /// 注册基于内存的校验码信息存储
         /// </summary>
         /// <param name="services"></param>
         /// <param name="setupAction">The <see cref="Action{MemoryCacheOptions}"/> to configure the provided <see cref="MemoryCacheOptions"/></param>
