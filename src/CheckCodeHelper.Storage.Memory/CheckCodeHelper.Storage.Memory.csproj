@@ -1,8 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+      <Authors>dong fang</Authors>
+      <Description>通用验证码发送及校验类库--通过内存存储校验信息</Description>
+      <PackageProjectUrl>https://github.com/fdstar/CheckCodeHelper</PackageProjectUrl>
+      <Copyright>https://mit-license.org/</Copyright>
+      <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+      <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -13,8 +19,8 @@
     <ProjectReference Include="..\CheckCodeHelper\CheckCodeHelper.csproj" />
   </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
-        <Reference Include="System.Runtime.Caching"/>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+        <Reference Include="System.Runtime.Caching" />
     </ItemGroup>
 
 </Project>
