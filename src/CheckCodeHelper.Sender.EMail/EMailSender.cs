@@ -86,7 +86,7 @@ namespace CheckCodeHelper.Sender.EMail
         public virtual async Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
         {
             var subject = this.SubjectFunc(bizFlag);
-            var content = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime);
+            var content = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime, this.Key);
             await this.EMailHelper.SendEMailAsync(subject, content, new List<MailboxAddress> {
                 new MailboxAddress(receiver)
             }, this.TextFormat).ConfigureAwait(false);
