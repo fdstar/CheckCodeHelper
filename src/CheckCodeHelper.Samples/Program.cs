@@ -16,10 +16,20 @@ namespace CheckCodeHelper.Samples
 {
     class Program
     {
-        static readonly string bizFlag="forgetPassword";
-        static readonly string receiver = "test";//根据不同的sender，输入不同的接收验证码账号
+        public static readonly string BizFlag= "ForgetAndResetPassword";
+        public static readonly string Receiver = "test";//根据不同的sender，输入不同的接收验证码账号
         static readonly TimeSpan effectiveTime = TimeSpan.FromMinutes(1);
         static void Main(string[] args)
+        {
+            ComplexHelperTest.Start();
+
+            //PrevDemo();
+
+            Console.ReadLine();
+
+        }
+
+        private static void PrevDemo()
         {
             ICodeSender sender = null;
             ICodeStorage storage;
@@ -33,14 +43,14 @@ namespace CheckCodeHelper.Samples
             //sender = GetEMailSender(); //通过邮件发送验证码
 
             CheckCodeHelperDemo(storage, sender);
-            Console.ReadLine();
         }
+
         private static void CheckCodeHelperDemo(ICodeStorage storage, ICodeSender sender = null)
         {
             if (sender == null)
             {
                 var senderKey = "CONSOLE";
-                sender = new ConsoleSender(GetFormatter(bizFlag, senderKey))
+                sender = new ConsoleSender(GetFormatter(BizFlag, senderKey))
                 {
                     Key = senderKey,
                 };
@@ -53,7 +63,7 @@ namespace CheckCodeHelper.Samples
             {
                 //ICodeStorage.GetLastSetCodeTime用于获取最后一次发送校验码时间
                 //用于比如手机验证码发送后，用户刷新页面时，页面上用于按钮倒计时计数的计算
-                var time = storage.GetLastSetCodeTimeAsync(receiver, bizFlag).Result;
+                var time = storage.GetLastSetCodeTimeAsync(Receiver, BizFlag).Result;
                 if (time.HasValue)
                 {
                     Console.WriteLine("上次发送时间：{0:yy-MM-dd HH:mm:ss.fff}", time.Value);
@@ -65,7 +75,7 @@ namespace CheckCodeHelper.Samples
             };
             getTimeAction();
 
-            var sendResult = helper.SendCodeAsync(receiver, bizFlag, code, effectiveTime, new PeriodLimit
+            var sendResult = helper.SendCodeAsync(Receiver, BizFlag, code, effectiveTime, new PeriodLimit
             {
                 //设置周期为20分钟，然后在此段时间内最多允许发送验证码5次
                 MaxLimit = 5,
@@ -82,7 +92,7 @@ namespace CheckCodeHelper.Samples
                     var vCode = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(vCode)) continue;
                     getTimeAction();
-                    var vResult = helper.VerifyCodeAsync(receiver, bizFlag, vCode, 3).Result;
+                    var vResult = helper.VerifyCodeAsync(Receiver, BizFlag, vCode, 3).Result;
                     Console.WriteLine("{2:yy-MM-dd HH:mm:ss }校验码 {0} 校验结果：{1}", vCode, vResult, DateTime.Now);
                     if (vResult != VerificationResult.VerificationFailed)
                     {
@@ -105,7 +115,7 @@ namespace CheckCodeHelper.Samples
             };
             string func(string b) => "找回密码验证码测试邮件";
             var helper = new EMailHelper(Options.Create(setting));
-            var sender = new EMailSender(GetFormatter(bizFlag, EMailSender.DefaultKey), helper, func)
+            var sender = new EMailSender(GetFormatter(BizFlag, EMailSender.DefaultKey), helper, func)
             {
                 TextFormat = MimeKit.Text.TextFormat.Plain//设置发送的邮件内容格式
             };
@@ -123,7 +133,7 @@ namespace CheckCodeHelper.Samples
                 AppId = appid,
                 SecretKey = secretKey
             }));
-            var sender = new SmsSender(GetFormatter(bizFlag, SmsSender.DefaultKey), sms);
+            var sender = new SmsSender(GetFormatter(BizFlag, SmsSender.DefaultKey), sms);
             return sender;
         }
         #endregion

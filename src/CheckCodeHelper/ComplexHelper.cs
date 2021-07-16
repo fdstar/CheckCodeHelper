@@ -14,7 +14,6 @@ namespace CheckCodeHelper
     /// </summary>
     public class ComplexHelper
     {
-        private readonly ICodeStorage codeStorage;
         private readonly Func<string, ICodeSender> senderFunc;
 
         /// <summary>
@@ -25,6 +24,10 @@ namespace CheckCodeHelper
         /// 基于业务标志的多内容模板
         /// </summary>
         public IComplexContentFormatter ComplexContentFormatter { get; }
+        /// <summary>
+        /// 数据存储
+        /// </summary>
+        public ICodeStorage CodeStorage { get; }
 
         /// <summary>
         /// 构造函数
@@ -49,7 +52,7 @@ namespace CheckCodeHelper
             this.ComplexSetting = setting;
 #endif
             this.ComplexContentFormatter = complexContentFormatter;
-            this.codeStorage = codeStorage;
+            CodeStorage = codeStorage;
             this.senderFunc = senderFunc;
             this.InitComplexContentFormatter(complexContentFormatter);
         }
@@ -160,7 +163,7 @@ namespace CheckCodeHelper
         public async Task<SendResult> SendCodeAsync(string senderKey, string receiver, string bizFlag, string code)
         {
             var sender = this.senderFunc(senderKey);
-            var codeHelper = new CodeHelper(sender, codeStorage);
+            var codeHelper = new CodeHelper(sender, this.CodeStorage);
             var period = this.GetPeriodLimit(senderKey, bizFlag);
             var effctiveTime = this.GetCodeEffectiveTime(senderKey, bizFlag);
             return await codeHelper.SendCodeAsync(receiver, bizFlag, code, effctiveTime, period);
@@ -178,7 +181,7 @@ namespace CheckCodeHelper
         public async Task<VerificationResult> VerifyCodeAsync(string senderKey, string receiver, string bizFlag, string code, bool resetWhileRight = false)
         {
             var sender = this.senderFunc(senderKey);
-            var codeHelper = new CodeHelper(sender, codeStorage);
+            var codeHelper = new CodeHelper(sender, this.CodeStorage);
             var errorLimit = this.GetCodeErrorLimit(senderKey, bizFlag);
             return await codeHelper.VerifyCodeAsync(receiver, bizFlag, code, errorLimit, resetWhileRight);
         }

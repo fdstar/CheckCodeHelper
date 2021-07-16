@@ -1,4 +1,5 @@
 ﻿#if NETSTANDARD2_0_OR_GREATER
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
@@ -12,15 +13,17 @@ namespace CheckCodeHelper
     /// <summary>
     /// 仅用于Net Core的注册方法
     /// </summary>
-    public static class ComplexExtensions
+    public static class CodeExtensions
     {
         /// <summary>
         /// 注册<see cref="ComplexHelper"/>，并注册其依赖的<see cref="IComplexContentFormatter"/>和用于获取<see cref="ICodeSender"/>的<see cref="Func{T, TResult}"/>
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="configuration">仅包含<see cref="ComplexSetting"/>的配置节点</param>
         /// <returns></returns>
-        public static IServiceCollection AddSingletonForComplexHelper(this IServiceCollection services)
+        public static IServiceCollection AddSingletonForComplexHelper(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<ComplexSetting>(configuration);
             services.AddSingleton<IComplexContentFormatter, ComplexContentFormatter>();//当前仅注册了formater，还需要内部构造
             services.AddSingleton<IContentFormatter>(p => p.GetService<IComplexContentFormatter>());//用ComplexContentFormatter注册
             services.AddSingleton(p =>//校验码发送者

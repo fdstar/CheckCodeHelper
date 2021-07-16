@@ -6,8 +6,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="5.0.3" />
     <PackageReference Include="StackExchange.Redis.Extensions.Protobuf" Version="5.0.3" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
+      
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
+
   </ItemGroup>
 
   <ItemGroup>
