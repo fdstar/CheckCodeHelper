@@ -17,6 +17,7 @@ namespace CheckCodeHelper
     {
         /// <summary>
         /// 注册<see cref="ComplexHelper"/>，并注册其依赖的<see cref="IComplexContentFormatter"/>和用于获取<see cref="ICodeSender"/>的<see cref="Func{T, TResult}"/>
+        /// 注意实际支持的<see cref="ICodeSender"/>需要自行注册
         /// </summary>
         /// <param name="services"></param>
         /// <param name="configuration">仅包含<see cref="ComplexSetting"/>的配置节点</param>
@@ -31,7 +32,12 @@ namespace CheckCodeHelper
                 Func<string, ICodeSender> func = key =>
                 {
                     var senders = p.GetServices<ICodeSender>();
-                    return senders.First(_ => _.Key == key);
+                    var sender = senders.FirstOrDefault(_ => _.Key == key);
+                    if (sender == null)
+                    {
+                        throw new KeyNotFoundException($"There is no sender with key '{key}'");
+                    }
+                    return sender;
                 };
                 return func;
             });
