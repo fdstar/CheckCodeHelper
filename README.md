@@ -13,6 +13,9 @@
 你可以在此处查看使用例子 https://github.com/fdstar/CheckCodeHelper/blob/master/src/CheckCodeHelper.Samples/Program.cs
 
 ## Release History
+**2021-07-17**
+- Release v1.0.1 增加`ComplexHelper`以统一在单个应用中校验码的发送与验证入口，支持按需调用指定的`ICodeSender`
+
 **2021-07-15**
 - Release v1.0.0
 
