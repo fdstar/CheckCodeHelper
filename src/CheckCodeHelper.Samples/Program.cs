@@ -16,8 +16,8 @@ namespace CheckCodeHelper.Samples
 {
     class Program
     {
-        public static readonly string BizFlag= "ForgetAndResetPassword";
-        public static readonly string Receiver = "test";//根据不同的sender，输入不同的接收验证码账号
+        static readonly string BizFlag = "ForgetAndResetPassword";
+        static readonly string Receiver = "test";//根据不同的sender，输入不同的接收验证码账号
         static readonly TimeSpan effectiveTime = TimeSpan.FromMinutes(1);
         static void Main(string[] args)
         {
@@ -81,7 +81,7 @@ namespace CheckCodeHelper.Samples
                 MaxLimit = 5,
                 Period = TimeSpan.FromMinutes(20)
             }).Result;
-            
+
             Console.WriteLine("发送结果：{0} 发送时间：{1:yy-MM-dd HH:mm:ss}", sendResult, DateTime.Now);
             if (sendResult == SendResult.Success)
             {
@@ -138,7 +138,7 @@ namespace CheckCodeHelper.Samples
         }
         #endregion
         #region IContentFormatter
-        private static IContentFormatter GetFormatter(string bizFlag,string senderKey)
+        private static IContentFormatter GetFormatter(string bizFlag, string senderKey)
         {
             var simpleFormatter = new ContentFormatter(
                     (r, b, c, e, s) => $"{r}您好，您的忘记密码验证码为{c}，有效期为{(int)e.TotalSeconds}秒.");

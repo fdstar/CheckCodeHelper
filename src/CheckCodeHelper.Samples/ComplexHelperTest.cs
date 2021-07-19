@@ -17,8 +17,6 @@ namespace CheckCodeHelper.Samples
         public const string EMAILKey = EMailSender.DefaultKey;
         public const string NONEKey = NoneSender.DefaultKey;
 
-        public const string SenderKey = NONEKey;
-
         static IServiceCollection services;
         static IConfiguration configuration;
         static ComplexHelperTest()
@@ -58,8 +56,9 @@ namespace CheckCodeHelper.Samples
             //ComplexHelper依赖ICodeSender.Key来获取实际的验证码发送者，如果找不到，会产生异常
             var complexHelper = serviceProvider.GetRequiredService<ComplexHelper>();
 
-            var receiver = Program.Receiver;
-            var bizFlag = Program.BizFlag;
+            var senderKey = configuration.GetValue<string>("CurrentSenderKey");
+            var receiver = configuration.GetValue<string>("Receiver");
+            var bizFlag = configuration.GetValue<string>("BizFlag");
             var code = CodeHelper.GetRandomNumber(); //生成随机的验证码
 
             Action getTimeAction = () =>
@@ -77,7 +76,7 @@ namespace CheckCodeHelper.Samples
 
             getTimeAction();
 
-            var sendResult = complexHelper.SendCodeAsync(SenderKey, receiver, bizFlag, code).Result;
+            var sendResult = complexHelper.SendCodeAsync(senderKey, receiver, bizFlag, code).Result;
 
             Console.WriteLine("发送结果：{0} 发送时间：{1:yy-MM-dd HH:mm:ss}", sendResult, DateTime.Now);
             if (sendResult == SendResult.Success)
@@ -89,7 +88,7 @@ namespace CheckCodeHelper.Samples
                     var vCode = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(vCode)) continue;
                     getTimeAction();
-                    var vResult = complexHelper.VerifyCodeAsync(SenderKey, receiver, bizFlag, vCode).Result;
+                    var vResult = complexHelper.VerifyCodeAsync(senderKey, receiver, bizFlag, vCode).Result;
                     Console.WriteLine("{2:yy-MM-dd HH:mm:ss }校验码 {0} 校验结果：{1}", vCode, vResult, DateTime.Now);
                     if (vResult != VerificationResult.VerificationFailed)
                     {
