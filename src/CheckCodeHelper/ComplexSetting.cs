@@ -16,13 +16,17 @@ namespace CheckCodeHelper
         /// </summary>
         public IDictionary<string, string> ContentFormatters { get; set; }
         /// <summary>
-        /// 周期次数限制
+        /// 周期次数限制<see cref="PeriodLimit.MaxLimit"/>
         /// </summary>
         public IDictionary<string, int> PeriodMaxLimits { get; set; }
         /// <summary>
-        /// 周期时长（秒）
+        /// 周期时长限制（秒）<see cref="PeriodLimit.Period"/>
         /// </summary>
         public IDictionary<string, int> PeriodLimitSeconds { get; set; }
+        /// <summary>
+        /// 周期内校验码发送间隔限制（秒）<see cref="PeriodLimit.Interval"/>
+        /// </summary>
+        public IDictionary<string, int> PeriodLimitIntervalSeconds { get; set; }
         /// <summary>
         /// 验证码有效时间（秒）
         /// </summary>

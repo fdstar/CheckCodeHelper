@@ -55,6 +55,7 @@ namespace CheckCodeHelper.Samples
             var serviceProvider = services.BuildServiceProvider();
 
             //获取Helper，如果默认的InitComplexContentFormatter不符合业务需求，可继承后重写
+            //ComplexHelper依赖ICodeSender.Key来获取实际的验证码发送者，如果找不到，会产生异常
             var complexHelper = serviceProvider.GetRequiredService<ComplexHelper>();
 
             var receiver = Program.Receiver;
