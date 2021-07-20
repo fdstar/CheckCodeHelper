@@ -118,6 +118,10 @@ namespace CheckCodeHelper
                     {
                         period.Period = TimeSpan.FromSeconds(this.ComplexSetting.PeriodLimitSeconds[uniqueKey]);
                     }
+                    if (this.ComplexSetting.PeriodLimitIntervalSeconds.ContainsKey(uniqueKey))
+                    {
+                        period.Interval = TimeSpan.FromSeconds(this.ComplexSetting.PeriodLimitIntervalSeconds[uniqueKey]);
+                    }
                     return period;
                 }
             }
@@ -151,6 +155,12 @@ namespace CheckCodeHelper
             }
             return dic[uniqueKey];
         }
+        private ICodeHelper GetCodeHelper(string senderKey)
+        {
+            var sender = this.senderFunc(senderKey);
+            var codeHelper = new CodeHelper(sender, this.CodeStorage);
+            return codeHelper;
+        }
 
         /// <summary>
         /// 使用指定的<see cref="ICodeSender"/>发送校验码
@@ -162,8 +172,7 @@ namespace CheckCodeHelper
         /// <returns></returns>
         public async Task<SendResult> SendCodeAsync(string senderKey, string receiver, string bizFlag, string code)
         {
-            var sender = this.senderFunc(senderKey);
-            var codeHelper = new CodeHelper(sender, this.CodeStorage);
+            var codeHelper = this.GetCodeHelper(senderKey);
             var period = this.GetPeriodLimit(senderKey, bizFlag);
             var effctiveTime = this.GetCodeEffectiveTime(senderKey, bizFlag);
             return await codeHelper.SendCodeAsync(receiver, bizFlag, code, effctiveTime, period);
@@ -180,10 +189,23 @@ namespace CheckCodeHelper
         /// <returns></returns>
         public async Task<VerificationResult> VerifyCodeAsync(string senderKey, string receiver, string bizFlag, string code, bool resetWhileRight = false)
         {
-            var sender = this.senderFunc(senderKey);
-            var codeHelper = new CodeHelper(sender, this.CodeStorage);
+            var codeHelper = this.GetCodeHelper(senderKey);
             var errorLimit = this.GetCodeErrorLimit(senderKey, bizFlag);
             return await codeHelper.VerifyCodeAsync(receiver, bizFlag, code, errorLimit, resetWhileRight);
+        }
+
+        /// <summary>
+        /// 获取校验码发送的CD时间，如果无CD时间，则返回<see cref="TimeSpan.Zero"/>
+        /// </summary>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
+        /// <param name="receiver">接收方</param>
+        /// <param name="bizFlag">业务标志</param>
+        /// <returns></returns>
+        public async Task<TimeSpan> GetSendCDAsync(string senderKey, string receiver, string bizFlag)
+        {
+            var codeHelper = this.GetCodeHelper(senderKey);
+            var period = this.GetPeriodLimit(senderKey, bizFlag);
+            return await codeHelper.GetSendCDAsync(receiver, bizFlag, period);
         }
     }
 }

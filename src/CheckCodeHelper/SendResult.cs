@@ -32,5 +32,10 @@ namespace CheckCodeHelper
         /// </summary>
         [Description("无法发送")]
         NotSupprot = 13,
+        /// <summary>
+        /// 发送间隔时间过短
+        /// </summary>
+        [Description("发送间隔时间过短")]
+        IntervalLimit = 14,
     }
 }

@@ -36,32 +36,40 @@ namespace CheckCodeHelper
         /// <param name="bizFlag">业务标志</param>
         /// <param name="code">校验码</param>
         /// <param name="effectiveTime">校验码有效时间范围</param>
-        /// <param name="maxSendLimit">周期内最大允许发送配置，为null则表示无限制</param>
-        public async Task<SendResult> SendCodeAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime, PeriodLimit maxSendLimit)
+        /// <param name="periodLimit">周期内允许的发送配置，为null则表示无限制</param>
+        public async Task<SendResult> SendCodeAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime, PeriodLimit periodLimit)
         {
             var result = SendResult.NotSupprot;
             if (this.Sender.IsSupport(receiver))
             {
                 result = SendResult.MaxSendLimit;
-                bool canSend = maxSendLimit == null;
-                int sendTimes = 0;
+                bool canSend = periodLimit == null || periodLimit.MaxLimit <= 0;
+                int sendCount = 0;
                 if (!canSend)
                 {
-                    sendTimes = await this.Storage.GetAreadySendTimesAsync(receiver, bizFlag).ConfigureAwait(false);
-                    canSend = sendTimes < maxSendLimit.MaxLimit;
+                    //校验最大次数
+                    sendCount = await this.Storage.GetAreadySendTimesAsync(receiver, bizFlag).ConfigureAwait(false);
+                    canSend = sendCount < periodLimit.MaxLimit;
                 }
                 if (canSend)
                 {
+                    //校验发送间隔
+                    result = SendResult.IntervalLimit;
+                    canSend = TimeSpan.Zero == await this.GetSendCDAsync(receiver, bizFlag, periodLimit).ConfigureAwait(false);
+                }
+                if (canSend)
+                {
+                    //校验发送结果
                     result = SendResult.FailInSend;
                     if (await this.Sender.SendAsync(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false)
                         && await this.Storage.SetCodeAsync(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false))
                     {
                         result = SendResult.Success;
-                        if (maxSendLimit != null)
+                        if (periodLimit != null)
                         {
-                            if (sendTimes == 0)
+                            if (sendCount == 0)
                             {
-                                await this.Storage.SetPeriodAsync(receiver, bizFlag, maxSendLimit.Period).ConfigureAwait(false);
+                                await this.Storage.SetPeriodAsync(receiver, bizFlag, periodLimit.Period).ConfigureAwait(false);
                             }
                             else
                             {
@@ -104,6 +112,29 @@ namespace CheckCodeHelper
                 }
             }
             return result;
+        }
+        /// <summary>
+        /// 获取校验码发送的CD时间，如果无CD时间，则返回<see cref="TimeSpan.Zero"/>
+        /// </summary>
+        /// <param name="receiver">接收方</param>
+        /// <param name="bizFlag">业务标志</param>
+        /// <param name="periodLimit">周期内允许的发送配置，为null则表示无限制</param>
+        /// <returns></returns>
+        public async Task<TimeSpan> GetSendCDAsync(string receiver, string bizFlag, PeriodLimit periodLimit)
+        {
+            if (periodLimit != null && periodLimit.Interval > TimeSpan.Zero)
+            {
+                var lastSendTime = await this.Storage.GetLastSetCodeTimeAsync(receiver, bizFlag).ConfigureAwait(false);
+                if (lastSendTime.HasValue)
+                {
+                    var ts = lastSendTime.Value.Add(periodLimit.Interval.Value) - DateTimeOffset.Now;
+                    if (ts > TimeSpan.Zero)
+                    {
+                        return ts;
+                    }
+                }
+            }
+            return TimeSpan.Zero;
         }
         /// <summary>
         /// 获取由数字组成的校验码

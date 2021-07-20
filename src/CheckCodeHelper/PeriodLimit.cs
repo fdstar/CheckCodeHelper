@@ -12,7 +12,7 @@ namespace CheckCodeHelper
     public class PeriodLimit
     {
         /// <summary>
-        /// 周期内允许的最大次数
+        /// 周期内允许的最大次数，0表示无限制
         /// </summary>
         public int MaxLimit { get; set; }
         /// <summary>
@@ -20,7 +20,7 @@ namespace CheckCodeHelper
         /// </summary>
         public TimeSpan? Period { get; set; }
         /// <summary>
-        /// 验证码发送间隔，如果不设置，表示可以无冷却重新发送验证码
+        /// 验证码发送间隔，如果不设置，表示可以无冷却重新发送验证码，注意该时间最大只能为验证码的有效时间，超出部分无效且容易造成提示错误
         /// 注意间隔不受周期时间影响，例如发送间隔是60秒，周期是12H，在单个周期的最后一秒发送验证码，在下个周期内，还是需要60-1秒之后才可以发送
         /// </summary>
         public TimeSpan? Interval { get; set; }

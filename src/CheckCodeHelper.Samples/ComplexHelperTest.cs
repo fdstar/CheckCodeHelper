@@ -66,20 +66,22 @@ namespace CheckCodeHelper.Samples
                 var time = complexHelper.CodeStorage.GetLastSetCodeTimeAsync(receiver, bizFlag).Result;
                 if (time.HasValue)
                 {
-                    Console.WriteLine("上次发送时间：{0:yy-MM-dd HH:mm:ss.fff}", time.Value);
+                    Console.WriteLine("上次发送时间：{0:yy-MM-dd HH:mm:ss.fff}", time.Value.LocalDateTime);
                 }
                 else
                 {
                     Console.WriteLine("未能获取到最后一次发送时间");
                 }
+                var ts = complexHelper.GetSendCDAsync(senderKey, receiver, bizFlag).Result;
+                Console.WriteLine("校验码发送剩余CD时间：{0}秒", ts.TotalSeconds);
             };
 
             getTimeAction();
 
             var sendResult = complexHelper.SendCodeAsync(senderKey, receiver, bizFlag, code).Result;
 
-            Console.WriteLine("发送结果：{0} 发送时间：{1:yy-MM-dd HH:mm:ss}", sendResult, DateTime.Now);
-            if (sendResult == SendResult.Success)
+            Console.WriteLine("发送结果：{0} 请求时间：{1:yy-MM-dd HH:mm:ss}", sendResult, DateTime.Now);
+            if (sendResult == SendResult.Success || sendResult == SendResult.IntervalLimit)
             {
                 Console.WriteLine("*****************************");
                 while (true)
