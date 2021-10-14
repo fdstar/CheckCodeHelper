@@ -72,7 +72,7 @@ namespace CheckCodeHelper
                 var content = kv.Value;
                 var tuple = this.GetBizFlagAndSenderKey(kv.Key);
                 complexContentFormatter.SetFormatter(tuple.Item1, tuple.Item2, new ContentFormatter(
-                    (r, b, c, e, s) => string.Format(content, r, b, c, (int)e.TotalSeconds, s)
+                    (r, b, c, e, s) => string.Format(content, r, b, c, ContentFormatter.GetNumberDisplayed(e, this.ComplexSetting.EffectiveTimeDisplayed), s)
                     ));
             }
         }

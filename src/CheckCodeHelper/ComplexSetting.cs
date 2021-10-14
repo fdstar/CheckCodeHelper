@@ -12,6 +12,10 @@ namespace CheckCodeHelper
     public class ComplexSetting
     {
         /// <summary>
+        /// 发送内容中验证码有效时间的显示方式，默认以秒显示
+        /// </summary>
+        public EffectiveTimeDisplayedInContent EffectiveTimeDisplayed { get; set; } = EffectiveTimeDisplayedInContent.Seconds;
+        /// <summary>
         /// 用于构造文本的内容模板
         /// </summary>
         public IDictionary<string, string> ContentFormatters { get; set; }
