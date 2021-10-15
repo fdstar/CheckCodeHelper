@@ -1,4 +1,5 @@
-﻿using CheckCodeHelper.Sender.EMail;
+﻿using CheckCodeHelper.Sender.AlibabaSms;
+using CheckCodeHelper.Sender.EMail;
 using CheckCodeHelper.Sender.Sms;
 using CheckCodeHelper.Storage.Memory;
 using CheckCodeHelper.Storage.Redis;
@@ -39,6 +40,7 @@ namespace CheckCodeHelper.Samples
             services.AddSingletonForSmsSenderWithEmay(configuration.GetSection("EmaySetting"));
             services.AddSingletonForEMailSender(configuration.GetSection("EMailSetting"));
             services.AddSingletonForSubject(configuration.GetSection("EMailSubjectSetting"));
+            services.AddSingletonForAlibabaSms(configuration.GetSection("AlibabaConfig"), configuration.GetSection("AlibabaSmsParameterSetting"));
 
             //注册ICodeStorage
             services.AddSingletonForRedisStorage(configuration.GetValue<string>("Redis:Configuration"));

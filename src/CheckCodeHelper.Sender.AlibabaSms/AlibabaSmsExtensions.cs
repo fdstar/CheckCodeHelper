@@ -1,4 +1,5 @@
 ﻿#if NETSTANDARD2_0_OR_GREATER
+using AlibabaCloud.OpenApiClient.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,8 +13,22 @@ namespace CheckCodeHelper.Sender.AlibabaSms
     /// <summary>
     /// 仅用于Net Core的注册方法
     /// </summary>
-    public class AlibabaSmsExtensions
+    public static class AlibabaSmsExtensions
     {
+        /// <summary>
+        /// 注册阿里短信发送相关的服务
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="config">仅包含<see cref="AlibabaCloud.OpenApiClient.Models.Config"/>的配置节点</param>
+        /// <param name="setting">仅包含<see cref="AlibabaSmsParameterSetting"/>的配置节点</param>
+        /// <returns></returns>
+        public static IServiceCollection AddSingletonForAlibabaSms(this IServiceCollection services, IConfiguration config, IConfiguration setting)
+        {
+            services.Configure<Config>(config);
+            services.Configure<AlibabaSmsParameterSetting>(setting);
+            services.AddSingleton<ICodeSender, AlibabaSmsSender>();
+            return services;
+        }
     }
 }
 #endif

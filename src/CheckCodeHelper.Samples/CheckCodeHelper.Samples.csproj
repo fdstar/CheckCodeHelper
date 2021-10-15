@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CheckCodeHelper.Sender.AlibabaSms\CheckCodeHelper.Sender.AlibabaSms.csproj" />
     <ProjectReference Include="..\CheckCodeHelper.Sender.EMail\CheckCodeHelper.Sender.EMail.csproj" />
     <ProjectReference Include="..\CheckCodeHelper.Sender.Sms\CheckCodeHelper.Sender.Sms.csproj" />
     <ProjectReference Include="..\CheckCodeHelper.Storage.Memory\CheckCodeHelper.Storage.Memory.csproj" />
