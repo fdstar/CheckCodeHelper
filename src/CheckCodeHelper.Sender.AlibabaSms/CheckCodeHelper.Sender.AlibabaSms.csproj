@@ -13,7 +13,6 @@
 
     <ItemGroup>
         <PackageReference Include="AlibabaCloud.SDK.Dysmsapi20170525" Version="1.0.3" />
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     </ItemGroup>
 
     <ItemGroup>
