@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CheckCodeHelper
 {
     /// <summary>
-    /// <see cref="ComplexHelper"/>的配置信息
+    /// <see cref="ComplexHelper"/>的配置信息，所有字典类属性Key值的组成方式均为<see cref="ICodeSender.Key"/> + 下划线 + 业务标志bizFlag
     /// </summary>
     public class ComplexSetting
     {
