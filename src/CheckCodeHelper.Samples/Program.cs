@@ -11,6 +11,8 @@ using StackExchange.Redis.Extensions.Core.Implementations;
 using StackExchange.Redis.Extensions.Newtonsoft;
 using StackExchange.Redis.Extensions.Protobuf;
 using System;
+using System.Collections.Generic;
+using static CheckCodeHelper.Sender.EMail.EMailMimeMessageSetting;
 
 namespace CheckCodeHelper.Samples
 {
@@ -104,7 +106,7 @@ namespace CheckCodeHelper.Samples
         #region ICodeSender
         private static ICodeSender GetEMailSender()
         {
-            var setting = new EMailSetting()//设置您的smtp信息
+            var emailSetting = new EMailSetting()//设置您的smtp信息
             {
                 Host = "smtp.exmail.qq.com",
                 Port = 465,
@@ -113,12 +115,16 @@ namespace CheckCodeHelper.Samples
                 Password = "",//填入发送邮件的邮箱密码
                 UserAddress = "",//填入发送邮件的邮箱地址
             };
-            string func(string b) => "找回密码验证码测试邮件";
-            var helper = new EMailHelper(Options.Create(setting));
-            var sender = new EMailSender(GetFormatter(BizFlag, EMailSender.DefaultKey), helper, func)
+            var subjectSetting = new EMailMimeMessageSetting
             {
-                TextFormat = MimeKit.Text.TextFormat.Plain//设置发送的邮件内容格式
+                DefaultTextFormat = MimeKit.Text.TextFormat.Plain,
+                Parameters = new Dictionary<string, MimeMessageParameter>
+                {
+                    { BizFlag , new MimeMessageParameter{ Subject="找回密码验证码测试邮件"}}
+                }
             };
+            var helper = new EMailHelper(Options.Create(emailSetting));
+            var sender = new EMailSender(GetFormatter(BizFlag, EMailSender.DefaultKey), helper, Options.Create(subjectSetting));
             return sender;
         }
         private static ICodeSender GetSmsSender()

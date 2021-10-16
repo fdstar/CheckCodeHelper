@@ -39,7 +39,7 @@ namespace CheckCodeHelper.Samples
             services.AddSingletonForNoneSender();
             services.AddSingletonForSmsSenderWithEmay(configuration.GetSection("EmaySetting"));
             services.AddSingletonForEMailSender(configuration.GetSection("EMailSetting"));
-            services.AddSingletonForSubject(configuration.GetSection("EMailSubjectSetting"));
+            services.AddSingletonForMimeMessage(configuration.GetSection("EMailMimeMessageSetting"));
             services.AddSingletonForAlibabaSms(configuration.GetSection("AlibabaConfig"), configuration.GetSection("AlibabaSmsParameterSetting"));
 
             //注册ICodeStorage

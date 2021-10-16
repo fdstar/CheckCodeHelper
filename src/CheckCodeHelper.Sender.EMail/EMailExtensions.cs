@@ -43,32 +43,14 @@ namespace CheckCodeHelper.Sender.EMail
         }
 
         /// <summary>
-        /// 注册简单的邮件主题<see cref="Func{T, TResult}"/>，该委托简单的返回业务标志对应的邮件主题，注意业务标志区分大小写
+        /// 注册<see cref="EMailMimeMessageSetting"/>配置
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration">仅包含<see cref="EMailSubjectSetting"/>的配置节点</param>
+        /// <param name="configuration">仅包含<see cref="EMailMimeMessageSetting"/>的配置节点</param>
         /// <returns></returns>
-        public static IServiceCollection AddSingletonForSubject(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddSingletonForMimeMessage(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<EMailSubjectSetting>(configuration);
-            services.AddSingleton(p => //邮件主题
-            {
-                var setting = p.GetRequiredService<IOptions<EMailSubjectSetting>>().Value;
-                var emailSubjects = setting.Subjects;
-                if (emailSubjects == null || emailSubjects.Count == 0)
-                {
-                    throw new ArgumentException(nameof(setting.Subjects));
-                }
-                Func<string, string> func = key =>
-                {
-                    if (!emailSubjects.ContainsKey(key))
-                    {
-                        throw new KeyNotFoundException($"The subject for '{key}' is not found");
-                    }
-                    return emailSubjects[key];
-                };
-                return func;
-            });
+            services.Configure<EMailMimeMessageSetting>(configuration);
             return services;
         }
     }

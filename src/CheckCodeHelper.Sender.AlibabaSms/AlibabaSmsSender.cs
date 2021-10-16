@@ -97,7 +97,7 @@ namespace CheckCodeHelper.Sender.AlibabaSms
                 TemplateParam = this.Formatter.GetContent(receiver, bizFlag, code, effectiveTime, this.Key),
             };
             var client = this.CreateClient();
-            var response = await client.SendSmsAsync(request);
+            var response = await client.SendSmsAsync(request).ConfigureAwait(false);
             return string.Equals(response.Body.Code, "OK", StringComparison.OrdinalIgnoreCase);
         }
 
