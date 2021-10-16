@@ -15,7 +15,7 @@ namespace CheckCodeHelper.Sender.Sms
     public static class SmsExtensions
     {
         /// <summary>
-        /// 注册亿美短信发送相关的服务,注意此方法仅适用于全系统就一种<see cref="ICodeSender"/>实现的情况
+        /// 注册亿美短信发送相关的服务,注意此方法仅适用于全系统就一种<see cref="SmsSender"/>实现的情况
         /// 注意此方法不会注册<see cref="SmsSender"/>依赖的<see cref="IContentFormatter"/>
         /// </summary>
         /// <param name="services"></param>

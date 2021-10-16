@@ -16,7 +16,8 @@ namespace CheckCodeHelper.Sender.AlibabaSms
     public static class AlibabaSmsExtensions
     {
         /// <summary>
-        /// 注册阿里短信发送相关的服务
+        /// 注册阿里短信发送相关的服务,注意此方法仅适用于全系统就一种<see cref="AlibabaSmsSender"/>的情况
+        /// 注意此方法不会注册<see cref="AlibabaSmsSender"/>依赖的<see cref="IContentFormatter"/>
         /// </summary>
         /// <param name="services"></param>
         /// <param name="config">仅包含<see cref="AlibabaCloud.OpenApiClient.Models.Config"/>的配置节点</param>

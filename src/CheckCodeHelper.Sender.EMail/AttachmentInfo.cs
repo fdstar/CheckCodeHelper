@@ -14,6 +14,14 @@ namespace CheckCodeHelper.Sender.EMail
     public class AttachmentInfo : IDisposable
     {
         /// <summary>
+        /// 释放<see cref="Stream"/>
+        /// </summary>
+        ~AttachmentInfo()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
         /// 附件类型
         /// </summary>
         public string ContentType { get; set; }

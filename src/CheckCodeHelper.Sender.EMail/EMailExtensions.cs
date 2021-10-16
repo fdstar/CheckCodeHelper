@@ -16,15 +16,17 @@ namespace CheckCodeHelper.Sender.EMail
     public static class EMailExtensions
     {
         /// <summary>
-        /// 注册邮件发送相关的服务,注意此方法仅适用于全系统就一种<see cref="ICodeSender"/>实现的情况
-        /// 注意此方法不会注册<see cref="EMailSender"/>依赖的<see cref="IContentFormatter"/>以及<see cref="Func{T, TResult}"/>
+        /// 注册邮件发送相关的服务,注意此方法仅适用于全系统就一种<see cref="EMailSender"/>的情况
+        /// 注意此方法不会注册<see cref="EMailSender"/>依赖的<see cref="IContentFormatter"/>
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration">仅包含<see cref="EMailSetting"/>的配置节点</param>
+        /// <param name="emailSetting">仅包含<see cref="EMailSetting"/>的配置节点</param>
+        /// <param name="emailMimeMessageSetting">仅包含<see cref="EMailMimeMessageSetting"/>的配置节点</param>
         /// <returns></returns>
-        public static IServiceCollection AddSingletonForEMailSender(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddSingletonForEMailSender(this IServiceCollection services, IConfiguration emailSetting, IConfiguration emailMimeMessageSetting)
         {
-            services.AddSingletonForEMailHelper(configuration);
+            services.Configure<EMailMimeMessageSetting>(emailMimeMessageSetting);
+            services.AddSingletonForEMailHelper(emailSetting);
             services.AddSingleton<ICodeSender, EMailSender>();
             return services;
         }
@@ -39,18 +41,6 @@ namespace CheckCodeHelper.Sender.EMail
         {
             services.Configure<EMailSetting>(configuration);
             services.AddSingleton<EMailHelper>();
-            return services;
-        }
-
-        /// <summary>
-        /// 注册<see cref="EMailMimeMessageSetting"/>配置
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configuration">仅包含<see cref="EMailMimeMessageSetting"/>的配置节点</param>
-        /// <returns></returns>
-        public static IServiceCollection AddSingletonForMimeMessage(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<EMailMimeMessageSetting>(configuration);
             return services;
         }
     }
