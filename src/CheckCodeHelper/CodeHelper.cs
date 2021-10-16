@@ -39,7 +39,7 @@ namespace CheckCodeHelper
         /// <param name="periodLimit">周期内允许的发送配置，为null则表示无限制</param>
         public async Task<SendResult> SendCodeAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime, PeriodLimit periodLimit)
         {
-            var result = SendResult.NotSupprot;
+            var result = SendResult.NotSupport;
             if (this.Sender.IsSupport(receiver))
             {
                 result = SendResult.MaxSendLimit;
@@ -102,7 +102,7 @@ namespace CheckCodeHelper
                     result = VerificationResult.Success;
                     if (!string.Equals(vCode.Item1, code, StringComparison.OrdinalIgnoreCase))
                     {
-                        result = VerificationResult.VerificationFailed;
+                        result = VerificationResult.Failed;
                         await this.Storage.IncreaseCodeErrorsAsync(receiver, bizFlag).ConfigureAwait(false);
                     }
                     else if(resetWhileRight)

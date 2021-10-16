@@ -26,7 +26,7 @@ namespace CheckCodeHelper
         /// 校验码不一致，校验失败
         /// </summary>
         [Description("校验失败")]
-        VerificationFailed = 32,
+        Failed = 32,
         /// <summary>
         /// 已经达到了最大错误尝试次数，需重新发送新的校验码
         /// </summary>

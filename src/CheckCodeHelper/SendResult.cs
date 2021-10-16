@@ -31,7 +31,7 @@ namespace CheckCodeHelper
         /// 无法发送，<see cref="ICodeSender.IsSupport(string)"/>结果为false
         /// </summary>
         [Description("无法发送")]
-        NotSupprot = 13,
+        NotSupport = 13,
         /// <summary>
         /// 发送间隔时间过短
         /// </summary>

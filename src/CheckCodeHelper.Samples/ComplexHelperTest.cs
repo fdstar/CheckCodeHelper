@@ -93,7 +93,7 @@ namespace CheckCodeHelper.Samples
                     getTimeAction();
                     var vResult = complexHelper.VerifyCodeAsync(senderKey, receiver, bizFlag, vCode).Result;
                     Console.WriteLine("{2:yy-MM-dd HH:mm:ss }校验码 {0} 校验结果：{1}", vCode, vResult, DateTime.Now);
-                    if (vResult != VerificationResult.VerificationFailed)
+                    if (vResult != VerificationResult.Failed)
                     {
                         break;
                     }
