@@ -21,6 +21,9 @@
 你可以在此处查看使用例子 https://github.com/fdstar/CheckCodeHelper/blob/master/src/CheckCodeHelper.Samples/Program.cs ，其中`PrevDemo()`为`new`显示声明方式实现的Demo，`ComplexHelperTest`为`.Net Core`依赖注入方式实现的Demo
 
 ## Release History
+**2021-10-18**
+- Release v1.0.3 增加阿里模板短信的`ICodeSender`实现
+
 **2021-07-20**
 - Release v1.0.2 增加校验码发送间隔限制
 
