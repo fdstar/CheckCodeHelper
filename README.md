@@ -3,14 +3,22 @@
 支持周期内限制最大发送次数，支持单次发送后最大校验错误次数  
 存储方案默认提供了`Redis`和`MemoryCache`实现，你也可以自己实现`ICodeStorage`来支持其它存储方案。
 
-[![NuGet version (CheckCodeHelper)](https://img.shields.io/nuget/v/CheckCodeHelper.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper/)
+
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://mit-license.org/)
+| Lib | Version | Summary |
+|---|---|---|
+|CheckCodeHelper|[![NuGet version (CheckCodeHelper)](https://img.shields.io/nuget/v/CheckCodeHelper.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper/)|主类库|
+|CheckCodeHelper.Sender.EMail|[![NuGet version (CheckCodeHelper.Sender.EMail)](https://img.shields.io/nuget/v/CheckCodeHelper.Sender.EMail.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper.Sender.EMail/)|基于EMail的`ICodeSender`实现|
+|CheckCodeHelper.Sender.Sms|[![NuGet version (CheckCodeHelper.Sender.Sms)](https://img.shields.io/nuget/v/CheckCodeHelper.Sender.Sms.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper.Sender.Sms/)|基于非模板短信的`ICodeSender`实现，默认提供`emay`短信实现|
+|CheckCodeHelper.Sender.AlibabaSms|[![NuGet version (CheckCodeHelper.Sender.AlibabaSms)](https://img.shields.io/nuget/v/CheckCodeHelper.Sender.AlibabaSms.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper.Sender.AlibabaSms/)|基于阿里模板短信的`ICodeSender`实现|
+|CheckCodeHelper.Storage.Redis|[![NuGet version (CheckCodeHelper.Storage.Redis)](https://img.shields.io/nuget/v/CheckCodeHelper.Storage.Redis.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper.Storage.Redis/)|基于Redis的`ICodeStorage`实现|
+|CheckCodeHelper.Storage.Memory|[![NuGet version (CheckCodeHelper.Storage.Memory)](https://img.shields.io/nuget/v/CheckCodeHelper.Storage.Memory.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper.Storage.Memory/)|基于MemoryCache的`ICodeStorage`实现|
 
 ## .NET版本支持
 支持以下版本：`.NET45`(Sms短信部分为`.NET452`)、`.NET Standard 2.0`
 
 ## 如何使用
-你可以在此处查看使用例子 https://github.com/fdstar/CheckCodeHelper/blob/master/src/CheckCodeHelper.Samples/Program.cs
+你可以在此处查看使用例子 https://github.com/fdstar/CheckCodeHelper/blob/master/src/CheckCodeHelper.Samples/Program.cs ，其中`PrevDemo()`为`new`显示声明方式实现的Demo，`ComplexHelperTest`为`.Net Core`依赖注入方式实现的Demo
 
 ## Release History
 **2021-07-20**
