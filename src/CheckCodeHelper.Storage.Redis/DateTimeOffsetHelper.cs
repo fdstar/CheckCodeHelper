@@ -1,4 +1,4 @@
-﻿#if NET45
+﻿#if NET45 || DEBUG
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace CheckCodeHelper.Storage
 {
-    internal static class DateTimeOffsetHelper
+    /// <summary>
+    /// Unix时间戳转换
+    /// </summary>
+    public static class DateTimeOffsetHelper
     {
         private const long TicksPerMillisecond = 10000;
         private const long TicksPerSecond = TicksPerMillisecond * 1000;
@@ -29,11 +32,21 @@ namespace CheckCodeHelper.Storage
         private const long UnixEpochTicks = TimeSpan.TicksPerDay * DaysTo1970; // 621,355,968,000,000,000
         private const long UnixEpochSeconds = UnixEpochTicks / TimeSpan.TicksPerSecond; // 62,135,596,800
         private const long UnixEpochMilliseconds = UnixEpochTicks / TimeSpan.TicksPerMillisecond; // 62,135,596,800,000
+        /// <summary>
+        /// 转换为毫秒时间戳
+        /// </summary>
+        /// <param name="dateTimeOffset"></param>
+        /// <returns></returns>
         public static long ToUnixTimeMilliseconds(this DateTimeOffset dateTimeOffset)
         {
             long milliseconds = dateTimeOffset.UtcDateTime.Ticks / TimeSpan.TicksPerMillisecond;
             return milliseconds - UnixEpochMilliseconds;
         }
+        /// <summary>
+        /// 从毫秒进行转换
+        /// </summary>
+        /// <param name="milliseconds"></param>
+        /// <returns></returns>
         public static DateTimeOffset FromUnixTimeMilliseconds(this long milliseconds)
         {
             const long MinMilliseconds = MinTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;

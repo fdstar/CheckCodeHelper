@@ -15,6 +15,23 @@ namespace CheckCodeHelper.Storage.Redis
         private const string CodeErrorHashKey = "Error";
         private const string CodeTimeHashKey = "Time";
         private const string PeriodHashKey = "Number";
+
+        private const string SetCodeScript = @"redis.call('HMSET', KEYS[1], 'Code', ARGV[1], 'Error', ARGV[2], 'Time', ARGV[3])
+                if ARGV[4] ~= '-1' then
+                  return redis.call('PEXPIRE', KEYS[1], ARGV[4])
+                end
+                return 1";
+        private const string SetPeriodScript = @"redis.call('HMSET', KEYS[1], 'Number', ARGV[1])
+                if ARGV[2] ~= '-1' then
+                  return redis.call('PEXPIRE', KEYS[1], ARGV[2])
+                end
+                return 1";
+        private const string HashIncrementScript = @"local hasKey = redis.call('EXISTS', KEYS[1])
+                if hasKey ~= '0' then
+                  redis.call('HINCRBY', KEYS[1], KEYS[2], ARGV[1])
+                end
+                return 1";
+
         /// <summary>
         /// Code缓存Key值前缀
         /// </summary>
@@ -87,10 +104,8 @@ namespace CheckCodeHelper.Storage.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
-            if (await db.KeyExistsAsync(key).ConfigureAwait(false))
-            {
-                await db.HashIncrementAsync(key, CodeErrorHashKey, 1).ConfigureAwait(false);
-            }
+            await db.ScriptEvaluateAsync(HashIncrementScript, new RedisKey[] { key, CodeErrorHashKey },
+                new RedisValue[] { 1 }).ConfigureAwait(false);
         }
         /// <summary>
         /// 校验码周期内发送次数+1，如果周期已到，则不进行任何操作
@@ -102,10 +117,8 @@ namespace CheckCodeHelper.Storage.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetPeriodKey(receiver, bizFlag);
-            if (await db.KeyExistsAsync(key).ConfigureAwait(false))
-            {
-                await db.HashIncrementAsync(key, PeriodHashKey, 1).ConfigureAwait(false);
-            }
+            await db.ScriptEvaluateAsync(HashIncrementScript, new RedisKey[] { key, PeriodHashKey },
+               new RedisValue[] { 1 }).ConfigureAwait(false);
         }
         /// <summary>
         /// 将校验码进行持久化，如果接收方和业务标志组合已经存在，则进行覆盖
@@ -119,26 +132,18 @@ namespace CheckCodeHelper.Storage.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetCodeKey(receiver, bizFlag);
-            var ret = await await db.HashSetAsync(key, new HashEntry[] {
-                new HashEntry(CodeValueHashKey,code),
-                new HashEntry(CodeErrorHashKey,0),
 #if NETSTANDARD2_0_OR_GREATER
-                new HashEntry(CodeTimeHashKey,DateTimeOffset.Now.ToUnixTimeMilliseconds())
+            var timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 #else
-                new HashEntry(CodeTimeHashKey,DateTimeOffsetHelper.ToUnixTimeMilliseconds(DateTimeOffset.Now))
+            var timestamp = DateTimeOffsetHelper.ToUnixTimeMilliseconds(DateTimeOffset.Now);
 #endif
-            }).ContinueWith(async t =>
-            {
-                if (t.IsCompleted)
-                {
-                    return await db.KeyExpireAsync(key, effectiveTime).ConfigureAwait(false);
-                }
-                return false;
-            }).ConfigureAwait(false);
+            var ms = this.GetMilliseconds(effectiveTime);
+            var ret = await db.ScriptEvaluateAsync(SetCodeScript, new RedisKey[] { key },
+                new RedisValue[] { code, 0, timestamp, ms }).ConfigureAwait(false);
 #if DEBUG
             Console.WriteLine("Method:{0} Result:{1}", nameof(SetCodeAsync), ret);
 #endif
-            return ret;
+            return (int)ret == 1;
         }
         /// <summary>
         /// 校验码发送次数周期持久化，如果接收方和业务标志组合已经存在，则进行覆盖
@@ -151,16 +156,13 @@ namespace CheckCodeHelper.Storage.Redis
         {
             var db = this.GetDatabase();
             var key = this.GetPeriodKey(receiver, bizFlag);
-            await db.HashSetAsync(key, PeriodHashKey, 1).ConfigureAwait(false);
-            var ret = true;
-            if (period.HasValue)
-            {
-                ret = await db.KeyExpireAsync(key, period.Value);
-            }
+            var ms = this.GetMilliseconds(period);
+            var ret = await db.ScriptEvaluateAsync(SetPeriodScript, new RedisKey[] { key },
+                new RedisValue[] { 1 , ms }).ConfigureAwait(false);
 #if DEBUG
             Console.WriteLine("Method:{0} Result:{1}", nameof(SetPeriodAsync), ret);
 #endif
-            return ret;
+            return (int)ret == 1;
         }
         /// <summary>
         /// 移除周期限制（适用于登录成功后，错误次数限制重新开始计时的场景）
@@ -196,6 +198,15 @@ namespace CheckCodeHelper.Storage.Redis
         private IDatabase GetDatabase()
         {
             return this._multiplexer.GetDatabase(this.DbNumber);
+        }
+        private long GetMilliseconds(TimeSpan? ts)
+        {
+            var ms = -1L;
+            if (ts.HasValue)
+            {
+                ms = (long)ts.Value.TotalMilliseconds;
+            }
+            return ms;
         }
         /// <summary>
         /// 获取最后一次校验码持久化的时间
