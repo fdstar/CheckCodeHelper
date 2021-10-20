@@ -14,8 +14,6 @@
 |CheckCodeHelper.Storage.Redis|[![NuGet version (CheckCodeHelper.Storage.Redis)](https://img.shields.io/nuget/v/CheckCodeHelper.Storage.Redis.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper.Storage.Redis/)|基于Redis的`ICodeStorage`实现|`.NET45`、`.NET Standard 2.0`|
 |CheckCodeHelper.Storage.Memory|[![NuGet version (CheckCodeHelper.Storage.Memory)](https://img.shields.io/nuget/v/CheckCodeHelper.Storage.Memory.svg?style=flat-square)](https://www.nuget.org/packages/CheckCodeHelper.Storage.Memory/)|基于MemoryCache的`ICodeStorage`实现|`.NET45`、`.NET Standard 2.0`|
 
-## .NET版本支持
-支持以下版本：`.NET45`(Sms短信部分为`.NET452`)、`.NET Standard 2.0`
 
 ## 如何使用
 你可以在此处查看使用例子 https://github.com/fdstar/CheckCodeHelper/blob/master/src/CheckCodeHelper.Samples/Program.cs ，其中`PrevDemo()`为`new`显示声明方式实现的Demo，`ComplexHelperTest`为`.Net Core`依赖注入方式实现的Demo
