@@ -22,7 +22,7 @@
 
 ## Release History
 **2021-10-18**
-- Release v1.0.3 增加阿里模板短信的`ICodeSender`实现
+- Release v1.0.3 增加阿里模板短信的`ICodeSender`实现，增加`EffectiveTimeDisplayedInContent`以调整验证码有效期在发送内容中的展示数字
 
 **2021-07-20**
 - Release v1.0.2 增加校验码发送间隔限制
