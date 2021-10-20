@@ -20,7 +20,7 @@
 
 ## Release History
 **2021-10-18**
-- Release v1.0.3 增加阿里模板短信的`ICodeSender`实现，增加`EffectiveTimeDisplayedInContent`以调整验证码有效期在发送内容中的展示方式，`ComplexHelper`已支持该枚举，`ComplexSetting.EffectiveTimeDisplayed`默认设置为`Seconds`，即在所有的发送内容中以秒对应的数字进行展示，设置为`Auto`时如果有效时间为整360秒或以上且可被360整除，则展示为对应的小时数，有效时间为整60秒或以上且可被60整除，则展示为对应的分钟数
+- Release v1.0.3 增加阿里模板短信的`ICodeSender`实现；增加`EffectiveTimeDisplayedInContent`以调整验证码有效期在发送内容中的展示方式，`ComplexHelper`已支持该枚举，`ComplexSetting.EffectiveTimeDisplayed`默认设置为`Seconds`，即在所有的发送内容中以秒对应的数字进行展示，设置为`Auto`时如果有效时间为整360秒或以上且可被360整除，则展示为对应的小时数，有效时间为整60秒或以上且可被60整除，则展示为对应的分钟数；`Sender.EMail`移除不必要的`Subject Func`，同步调整`TextFormat`及`Subject`到`EMailMimeMessageSetting`
 
 **2021-07-20**
 - Release v1.0.2 增加校验码发送间隔限制
