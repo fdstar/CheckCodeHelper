@@ -19,15 +19,17 @@
 你可以在此处查看使用例子 https://github.com/fdstar/CheckCodeHelper/blob/master/src/CheckCodeHelper.Samples/Program.cs ，其中`PrevDemo()`为`new`显示声明方式实现的Demo，`ComplexHelperTest`为`.Net Core`依赖注入方式实现的Demo
 
 ## Release History
-**2021-10-18**
-- Release v1.0.3 增加阿里模板短信的`ICodeSender`实现；增加`EffectiveTimeDisplayedInContent`以调整验证码有效期在发送内容中的展示方式，`ComplexHelper`已支持该枚举，`ComplexSetting.EffectiveTimeDisplayed`默认设置为`Seconds`，即在所有的发送内容中以秒对应的数字进行展示，设置为`Auto`时如果有效时间为整360秒或以上且可被360整除，则展示为对应的小时数，有效时间为整60秒或以上且可被60整除，则展示为对应的分钟数；`Sender.EMail`移除不必要的`Subject Func`，同步调整`TextFormat`及`Subject`到`EMailMimeMessageSetting`
+**2021-10-18 Release v1.0.3**
+- 增加阿里模板短信的`ICodeSender`实现
+- 增加`EffectiveTimeDisplayedInContent`以调整验证码有效期在发送内容中的展示方式，`ComplexHelper`已支持该枚举，`ComplexSetting.EffectiveTimeDisplayed`默认设置为`Seconds`，即在所有的发送内容中以秒对应的数字进行展示，设置为`Auto`时如果有效时间为整360秒或以上且可被360整除，则展示为对应的小时数，有效时间为整60秒或以上且可被60整除，则展示为对应的分钟数
+- `Sender.EMail`移除不必要的`Subject Func`，同步调整`TextFormat`及`Subject`到`EMailMimeMessageSetting`，注意对于`EMail`部分这是一个**破坏性调整**
 
-**2021-07-20**
-- Release v1.0.2 增加校验码发送间隔限制
+**2021-07-20 Release v1.0.2**
+- 增加校验码发送间隔限制
 
-**2021-07-17**
-- Release v1.0.1 增加`ComplexHelper`以统一在单个应用中校验码的发送与验证入口，支持按需调用指定的`ICodeSender`
+**2021-07-17 Release v1.0.1**
+- 增加`ComplexHelper`以统一在单个应用中校验码的发送与验证入口，支持按需调用指定的`ICodeSender`
 
-**2021-07-15**
-- Release v1.0.0
+**2021-07-15 Release v1.0.0**
+- 主体功能
 
