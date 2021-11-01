@@ -40,7 +40,7 @@ namespace CheckCodeHelper
         public async Task<SendResult> SendCodeAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime, PeriodLimit periodLimit)
         {
             var result = SendResult.NotSupport;
-            if (this.Sender.IsSupport(receiver))
+            if (await this.IsSupportAsync(receiver).ConfigureAwait(false))
             {
                 result = SendResult.MaxSendLimit;
                 bool canSend = periodLimit == null || periodLimit.MaxLimit <= 0;
@@ -81,6 +81,14 @@ namespace CheckCodeHelper
             }
             return result;
         }
+        private async Task<bool> IsSupportAsync(string receiver)
+        {
+            if (this.Sender is ICodeSenderSupportAsync senderAsync)
+            {
+                return await senderAsync.IsSupportAsync(receiver).ConfigureAwait(false);
+            }
+            return this.Sender.IsSupport(receiver);
+        }
         /// <summary>
         /// 验证校验码是否正确
         /// </summary>
@@ -107,7 +115,7 @@ namespace CheckCodeHelper
                     }
                     else if(resetWhileRight)
                     {
-                        await this.Storage.RemovePeriodAsync(receiver, bizFlag);
+                        await this.Storage.RemovePeriodAsync(receiver, bizFlag).ConfigureAwait(false);
                     }
                 }
             }

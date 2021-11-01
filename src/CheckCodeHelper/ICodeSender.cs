@@ -35,4 +35,17 @@ namespace CheckCodeHelper
         /// <returns>发送结果</returns>
         Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime);
     }
+
+    /// <summary>
+    /// 用于支持某些需要异步判断<see cref="ICodeSender.IsSupport(string)"/>的场景
+    /// </summary>
+    public interface ICodeSenderSupportAsync
+    {
+        /// <summary>
+        /// 判断接收者是否符合发送条件 <see cref="ICodeSender.IsSupport(string)"/>异步版
+        /// </summary>
+        /// <param name="receiver"></param>
+        /// <returns></returns>
+        Task<bool> IsSupportAsync(string receiver);
+    }
 }

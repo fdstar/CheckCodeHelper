@@ -8,7 +8,7 @@ namespace CheckCodeHelper.Samples
     /// <summary>
     /// 在控制台输出校验码
     /// </summary>
-    public class ConsoleSender : ICodeSender
+    public class ConsoleSender : ICodeSender, ICodeSenderSupportAsync
     {
         public ConsoleSender(IContentFormatter formatter)
         {
@@ -16,9 +16,14 @@ namespace CheckCodeHelper.Samples
         }
         public IContentFormatter Formatter { get; }
 
-        public string Key { get; set; }
+        public string Key { get; set; } = "Console";
 
         public bool IsSupport(string receiver) => true;
+
+        public Task<bool> IsSupportAsync(string receiver)
+        {
+            return Task.FromResult(this.IsSupport(receiver));
+        }
 
         public Task<bool> SendAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime)
         {

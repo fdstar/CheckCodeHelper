@@ -14,10 +14,6 @@ namespace CheckCodeHelper.Samples
 {
     public static class ComplexHelperTest
     {
-        public const string SMSKey = SmsSender.DefaultKey;
-        public const string EMAILKey = EMailSender.DefaultKey;
-        public const string NONEKey = NoneSender.DefaultKey;
-
         static IServiceCollection services;
         static IConfiguration configuration;
         static ComplexHelperTest()
@@ -40,6 +36,9 @@ namespace CheckCodeHelper.Samples
             services.AddSingletonForSmsSenderWithEmay(configuration.GetSection("EmaySetting"));
             services.AddSingletonForEMailSender(configuration.GetSection("EMailSetting"), configuration.GetSection("EMailMimeMessageSetting"));
             services.AddSingletonForAlibabaSms(configuration.GetSection("AlibabaConfig"), configuration.GetSection("AlibabaSmsParameterSetting"));
+
+            //增加自定义ICodeSender例子，且该Sender未设置周期限制
+            services.AddSingleton<ICodeSender, ConsoleSender>();
 
             //注册ICodeStorage
             services.AddSingletonForRedisStorage(configuration.GetValue<string>("Redis:Configuration"));
