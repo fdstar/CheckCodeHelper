@@ -104,28 +104,34 @@ namespace CheckCodeHelper
         }
         private PeriodLimit GetPeriodLimit(string senderKey, string bizFlag)
         {
+            PeriodLimit period = null;
+            var uniqueKey = this.GetUniqueKey(senderKey, bizFlag);
             var maxLimit = this.ComplexSetting.PeriodMaxLimits;
             if (maxLimit != null && maxLimit.Count > 0)
             {
-                var uniqueKey = this.GetUniqueKey(senderKey, bizFlag);
                 if (maxLimit.ContainsKey(uniqueKey))
                 {
-                    var period = new PeriodLimit()
-                    {
-                        MaxLimit = maxLimit[uniqueKey]
-                    };
+                    InitPeriodLimit();
+                    period.MaxLimit = maxLimit[uniqueKey];
                     if (this.ComplexSetting.PeriodLimitSeconds.ContainsKey(uniqueKey))
                     {
                         period.Period = TimeSpan.FromSeconds(this.ComplexSetting.PeriodLimitSeconds[uniqueKey]);
                     }
-                    if (this.ComplexSetting.PeriodLimitIntervalSeconds.ContainsKey(uniqueKey))
-                    {
-                        period.Interval = TimeSpan.FromSeconds(this.ComplexSetting.PeriodLimitIntervalSeconds[uniqueKey]);
-                    }
-                    return period;
                 }
             }
-            return null;
+            if (this.ComplexSetting.PeriodLimitIntervalSeconds.ContainsKey(uniqueKey))
+            {
+                InitPeriodLimit();
+                period.Interval = TimeSpan.FromSeconds(this.ComplexSetting.PeriodLimitIntervalSeconds[uniqueKey]);
+            }
+            void InitPeriodLimit()
+            {
+                if (period == null)
+                {
+                    period = new PeriodLimit();
+                }
+            }
+            return period;
         }
         private TimeSpan GetCodeEffectiveTime(string senderKey, string bizFlag)
         {
