@@ -24,6 +24,7 @@
 ## Release History
 **Unreleased**
 - 增加`ICodeSenderSupportAsync`以支持`ICodeSender.IsSupport`异步场景，如果`ICodeSender`同时实现了`ICodeSenderSupportAsync`，则`CodeHelper`会通过`ICodeSenderSupportAsync.IsSupportAsync`判断`SendResult.NotSupport`
+- 修正`ComplexHelper`获取`PeriodLimit`时，如果未配置`ComplexSetting.PeriodMaxLimits`会导致`ComplexSetting.PeriodLimitIntervalSeconds`无效的问题
 
 **2021-10-18 Release v1.0.3**
 - 增加阿里模板短信的`ICodeSender`实现
