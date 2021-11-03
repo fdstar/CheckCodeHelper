@@ -9,6 +9,7 @@
       <Copyright>https://mit-license.org/</Copyright>
       <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
       <Version>1.0.1</Version>
+      <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
