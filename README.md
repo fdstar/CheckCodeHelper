@@ -22,22 +22,51 @@
 - `ConsoleSender`为自定义`ICodeSender`及`ICodeSenderSupportAsync`的例子
 
 ## Release History
-**2021-11-03 Release v1.0.4**
-- 增加`ICodeSenderSupportAsync`以支持`ICodeSender.IsSupport`异步场景，如果`ICodeSender`同时实现了`ICodeSenderSupportAsync`，则`CodeHelper`会通过`ICodeSenderSupportAsync.IsSupportAsync`判断`SendResult.NotSupport`
-- 修正`ComplexHelper`获取`PeriodLimit`时，如果未配置`ComplexSetting.PeriodMaxLimits`会导致`ComplexSetting.PeriodLimitIntervalSeconds`无效的问题
+**2021-11-03 Release** 
+|CheckCodeHelper v1.0.4|
+|:--|
+|增加`ICodeSenderSupportAsync`以支持`ICodeSender.IsSupport`异步场景，如果`ICodeSender`同时实现了`ICodeSenderSupportAsync`，则`CodeHelper`会通过`ICodeSenderSupportAsync.IsSupportAsync`判断`SendResult.NotSupport`|
+|修正`ComplexHelper`获取`PeriodLimit`时，如果未配置`ComplexSetting.PeriodMaxLimits`会导致`ComplexSetting.PeriodLimitIntervalSeconds`无效的问题|
 
-**2021-10-18 Release v1.0.3**
-- 增加阿里模板短信的`ICodeSender`实现
-- 增加`EffectiveTimeDisplayedInContent`以调整验证码有效期在发送内容中的展示方式，`ComplexHelper`已支持该枚举，`ComplexSetting.EffectiveTimeDisplayed`默认设置为`Seconds`，即在所有的发送内容中以秒对应的数字进行展示，设置为`Auto`时如果有效时间为整360秒或以上且可被360整除，则展示为对应的小时数，有效时间为整60秒或以上且可被60整除，则展示为对应的分钟数
-- `Sender.EMail`移除不必要的`Subject Func`，同步调整`TextFormat`及`Subject`到`EMailMimeMessageSetting`，注意对于`EMail`部分这是一个**破坏性调整**
-- `SendResult.NotSupprot`修正拼写错误为`SendResult.NotSupport`；`VerificationResult.VerificationFailed`简化为`Failed`。注意对于`CheckCodeHelper`这是**破坏性调整**，会造成升级后相关判断产生错误
+**2021-10-20 Release** 
+|<div style="width:100px">CheckCodeHelper.Storage.Redis v1.0.1</div>|
+|:--|
+|调整为通过`Lua`脚本合并执行`Redis`的多条更新指令|
 
-**2021-07-20 Release v1.0.2**
-- 增加校验码发送间隔限制
+**2021-10-18 Release** 
+|CheckCodeHelper v1.0.3|
+|:--|
+|增加`EffectiveTimeDisplayedInContent`以调整验证码有效期在发送内容中的展示方式，`ComplexHelper`已支持该枚举，`ComplexSetting.EffectiveTimeDisplayed`默认设置为`Seconds`，即在所有的发送内容中以秒对应的数字进行展示，设置为`Auto`时如果有效时间为整360秒或以上且可被360整除，则展示为对应的小时数，有效时间为整60秒或以上且可被60整除，则展示为对应的分钟数<br>
+`SendResult.NotSupprot`修正拼写错误为`SendResult.NotSupport`；`VerificationResult.VerificationFailed`简化为`Failed`。注意对于`CheckCodeHelper`这是**破坏性调整**，会造成升级后相关判断产生错误|
+|**CheckCodeHelper.Sender.EMail v1.0.3**|
+|移除不必要的`Subject Func`，同步调整`TextFormat`及`Subject`到`EMailMimeMessageSetting`，注意对于`EMail`部分这是一个**破坏性调整**  |
+|**CheckCodeHelper.Sender.AlibabaSms v1.0.0**|
+|基于阿里模板短信的`ICodeSender`实现|
 
-**2021-07-17 Release v1.0.1**
-- 增加`ComplexHelper`以统一在单个应用中校验码的发送与验证入口，支持按需调用指定的`ICodeSender`
+**2021-07-20 Release** 
+|CheckCodeHelper v1.0.2|
+|:--|
+|增加`PeriodLimit.Interval`以支持限制发送检验码的时间间隔|
+|**CheckCodeHelper.Sender.Sms v1.0.1**|
+|升级依赖的`RestSharp`版本至`106.12.0`以解决潜在的安全问题|
 
-**2021-07-15 Release v1.0.0**
-- 主体功能
+**2021-07-17 Release**
+|CheckCodeHelper v1.0.1|
+|:--|
+|增加`ComplexHelper`以统一在单个应用中校验码的发送与验证入口，支持按需调用指定的`ICodeSender`|
+|**CheckCodeHelper.Sender.EMail v1.0.2**|
+|增加`Subject Func`以支持`ComplexHelper`|
+
+**2021-07-15 Release**
+|CheckCodeHelper v1.0.0|
+|:--|
+|主体功能|
+|**CheckCodeHelper.Sender.Sms v1.0.0**|
+|基于非模板短信的`ICodeSender`实现|
+|**CheckCodeHelper.Sender.EMail v1.0.1**|
+|基于EMail的`ICodeSender`实现|
+|**CheckCodeHelper.Storage.Redis v1.0.0**|
+|基于`Redis`的`ICodeStorage`实现|
+|**CheckCodeHelper.Storage.Memory v1.0.0**|
+|基于`MemoryCache`的`ICodeStorage`实现|
 
