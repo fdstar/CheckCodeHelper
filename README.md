@@ -22,7 +22,7 @@
 - `ConsoleSender`为自定义`ICodeSender`及`ICodeSenderSupportAsync`的例子
 
 ## Release History
-**Unreleased**
+**2021-11-03 Release v1.0.4**
 - 增加`ICodeSenderSupportAsync`以支持`ICodeSender.IsSupport`异步场景，如果`ICodeSender`同时实现了`ICodeSenderSupportAsync`，则`CodeHelper`会通过`ICodeSenderSupportAsync.IsSupportAsync`判断`SendResult.NotSupport`
 - 修正`ComplexHelper`获取`PeriodLimit`时，如果未配置`ComplexSetting.PeriodMaxLimits`会导致`ComplexSetting.PeriodLimitIntervalSeconds`无效的问题
 
