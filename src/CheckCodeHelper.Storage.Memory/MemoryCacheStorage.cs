@@ -183,15 +183,17 @@ namespace CheckCodeHelper.Storage.Memory
             return Task.FromResult(true);
         }
         /// <summary>
-        /// 移除周期限制（适用于登录成功后，错误次数限制重新开始计时的场景）
+        /// 移除周期限制以及错误次数（适用于登录成功后，错误次数限制重新开始计时的场景）
         /// </summary>
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
         /// <returns>执行结果</returns>
         public Task RemovePeriodAsync(string receiver, string bizFlag)
         {
-            var key = this.GetPeriodKey(receiver, bizFlag);
-            this.Cache.Remove(key);
+            var periodKey = this.GetPeriodKey(receiver, bizFlag);
+            var codeKey = this.GetCodeKey(receiver, bizFlag);
+            this.Cache.Remove(periodKey);
+            this.Cache.Remove(codeKey);
             return Task.FromResult(0);
         }
         private void SetCache(string key, CodeStorage storage, TimeSpan? absoluteToNow)

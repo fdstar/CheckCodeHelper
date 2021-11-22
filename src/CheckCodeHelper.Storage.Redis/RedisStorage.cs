@@ -165,7 +165,7 @@ namespace CheckCodeHelper.Storage.Redis
             return (int)ret == 1;
         }
         /// <summary>
-        /// 移除周期限制（适用于登录成功后，错误次数限制重新开始计时的场景）
+        /// 移除周期限制以及错误次数（适用于登录成功后，错误次数限制重新开始计时的场景）
         /// </summary>
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
@@ -173,8 +173,9 @@ namespace CheckCodeHelper.Storage.Redis
         public async Task RemovePeriodAsync(string receiver, string bizFlag)
         {
             var db = this.GetDatabase();
-            var key = this.GetPeriodKey(receiver, bizFlag);
-            await db.KeyDeleteAsync(key).ConfigureAwait(false);
+            var periodKey = this.GetPeriodKey(receiver, bizFlag);
+            var codeKey = this.GetCodeKey(receiver, bizFlag);
+            await db.KeyDeleteAsync(new RedisKey[] { periodKey, codeKey }).ConfigureAwait(false);
         }
         /// <summary>
         /// 组织Redis键值

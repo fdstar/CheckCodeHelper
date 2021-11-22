@@ -36,7 +36,7 @@ namespace CheckCodeHelper
         /// <returns>执行结果</returns>
         Task<bool> SetPeriodAsync(string receiver, string bizFlag, TimeSpan? period);
         /// <summary>
-        /// 移除周期限制（适用于登录成功后，错误次数限制重新开始计时的场景）
+        /// 移除周期限制以及错误次数（适用于登录成功后，错误次数限制重新开始计时的场景）
         /// </summary>
         /// <param name="receiver">接收方</param>
         /// <param name="bizFlag">业务标志</param>
