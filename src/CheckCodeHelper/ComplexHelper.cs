@@ -102,7 +102,13 @@ namespace CheckCodeHelper
             var senderKey = uniqueKey.Substring(0, idx);
             return Tuple.Create(bizFlag, senderKey);
         }
-        private PeriodLimit GetPeriodLimit(string senderKey, string bizFlag)
+        /// <summary>
+        /// 获取周期限制设置，返回null表示为设置
+        /// </summary>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
+        /// <param name="bizFlag">业务标志</param>
+        /// <returns></returns>
+        public PeriodLimit GetPeriodLimit(string senderKey, string bizFlag)
         {
             PeriodLimit period = null;
             var uniqueKey = this.GetUniqueKey(senderKey, bizFlag);
@@ -133,7 +139,13 @@ namespace CheckCodeHelper
             }
             return period;
         }
-        private TimeSpan GetCodeEffectiveTime(string senderKey, string bizFlag)
+        /// <summary>
+        /// 获取验证码的有效时间设置
+        /// </summary>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
+        /// <param name="bizFlag">业务标志</param>
+        /// <returns></returns>
+        public TimeSpan GetCodeEffectiveTime(string senderKey, string bizFlag)
         {
             var dic = this.ComplexSetting.CodeEffectiveSeconds;
             if (dic == null || dic.Count == 0)
@@ -147,7 +159,13 @@ namespace CheckCodeHelper
             }
             return TimeSpan.FromSeconds(dic[uniqueKey]);
         }
-        private int GetCodeErrorLimit(string senderKey, string bizFlag)
+        /// <summary>
+        /// 获取错误次数限制设置
+        /// </summary>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
+        /// <param name="bizFlag">业务标志</param>
+        /// <returns></returns>
+        public int GetCodeErrorLimit(string senderKey, string bizFlag)
         {
             var dic = this.ComplexSetting.CodeMaxErrorLimits;
             if (dic == null || dic.Count == 0)
@@ -161,7 +179,12 @@ namespace CheckCodeHelper
             }
             return dic[uniqueKey];
         }
-        private ICodeHelper GetCodeHelper(string senderKey)
+        /// <summary>
+        /// 获取<see cref="ICodeHelper"/>
+        /// </summary>
+        /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
+        /// <returns></returns>
+        public ICodeHelper GetCodeHelper(string senderKey)
         {
             var sender = this.senderFunc(senderKey);
             var codeHelper = new CodeHelper(sender, this.CodeStorage);

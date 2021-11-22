@@ -28,7 +28,7 @@ namespace CheckCodeHelper
         }
         private string GetKey(string bizFlag, string senderKey)
         {
-            return $"{bizFlag}_{senderKey}";
+            return $"{senderKey}_{bizFlag}";
         }
         /// <summary>
         /// 移除指定业务对应的内容模板，如果没有，则返回null
