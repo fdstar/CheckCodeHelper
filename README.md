@@ -22,6 +22,13 @@
 - `ConsoleSender`为自定义`ICodeSender`及`ICodeSenderSupportAsync`的例子
 
 ## Release History
+**Unreleased**
+|CheckCodeHelper.Storage.Redis v1.0.2|
+|:--|
+|`ICodeStorage.RemovePeriodAsync`同时移除周期限制及错误次数记录|
+|**CheckCodeHelper.Storage.Memory v1.0.1**|
+|`ICodeStorage.RemovePeriodAsync`同时移除周期限制及错误次数记录|
+
 **2021-11-03 Release** 
 |CheckCodeHelper v1.0.4|
 |:--|
