@@ -52,12 +52,12 @@ namespace CheckCodeHelper
             this.ComplexSetting = setting;
 #endif
             this.ComplexContentFormatter = complexContentFormatter;
-            CodeStorage = codeStorage;
+            this.CodeStorage = codeStorage;
             this.senderFunc = senderFunc;
             this.InitComplexContentFormatter(complexContentFormatter);
         }
         /// <summary>
-        /// 初始化模板信息，默认按<see cref="IContentFormatter.GetContent(string, string, string, TimeSpan, string)"/>参数顺序进行<see cref="string.Format(string, object[])"/>占位，TimeSpan转化为秒进行占位填充
+        /// 初始化模板信息，<see cref="ComplexSetting.ContentFormatters"/>不为空时默认按<see cref="IContentFormatter.GetContent(string, string, string, TimeSpan, string)"/>参数顺序进行<see cref="string.Format(string, object[])"/>占位，TimeSpan转化为秒进行占位填充
         /// </summary>
         /// <param name="complexContentFormatter"></param>
         protected virtual void InitComplexContentFormatter(IComplexContentFormatter complexContentFormatter)
@@ -65,7 +65,7 @@ namespace CheckCodeHelper
             var dic = this.ComplexSetting.ContentFormatters;
             if (dic == null || dic.Count == 0)
             {
-                throw new ArgumentException(nameof(this.ComplexSetting.ContentFormatters));
+                return;
             }
             foreach (var kv in dic)
             {
@@ -175,7 +175,7 @@ namespace CheckCodeHelper
             var uniqueKey = this.GetUniqueKey(senderKey, bizFlag);
             if (!dic.ContainsKey(uniqueKey))
             {
-                throw new KeyNotFoundException($"The error limits for code with key'{uniqueKey}' is not found");
+                throw new KeyNotFoundException($"The error limits for code with key '{uniqueKey}' is not found");
             }
             return dic[uniqueKey];
         }

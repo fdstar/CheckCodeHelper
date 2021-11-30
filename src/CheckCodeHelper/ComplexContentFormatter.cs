@@ -58,12 +58,13 @@ namespace CheckCodeHelper
         {
             if (string.IsNullOrWhiteSpace(bizFlag))
             {
-                throw new ArgumentNullException(nameof(bizFlag));
+                throw new ArgumentException(nameof(bizFlag));
             }
-            this._dic.TryGetValue(this.GetKey(bizFlag, senderKey), out IContentFormatter formatter);
+            var key = this.GetKey(bizFlag, senderKey);
+            this._dic.TryGetValue(key, out IContentFormatter formatter);
             if (formatter == null)
             {
-                throw new KeyNotFoundException(nameof(formatter));
+                throw new KeyNotFoundException($"There is no formatter with key '{key}'");
             }
             return formatter.GetContent(receiver, bizFlag, code, effectiveTime, senderKey);
         }
