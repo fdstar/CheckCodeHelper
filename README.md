@@ -25,7 +25,7 @@
 **2021-11-30 Release** 
 |CheckCodeHelper v1.0.6|
 |:--|
-|鉴于`IComplexContentFormatter`在`ComplexHelper`中作为构造参数传入，其本身可能已包含如何构造要发送的文本内容，故调整`ComplexHelper.ComplexSetting`为空未设置时，不再抛出异常|
+|鉴于`IComplexContentFormatter`在`ComplexHelper`中作为构造参数传入，其本身可能已包含如何构造要发送的文本内容，故调整`ComplexHelper.ComplexSetting.ContentFormatters`为空未设置时，不再抛出异常|
 
 **2021-11-22 Release** 
 |CheckCodeHelper v1.0.5|
