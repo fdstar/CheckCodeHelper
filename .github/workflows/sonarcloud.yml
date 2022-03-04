@@ -22,7 +22,7 @@ jobs:
         with:
           dotnet-version: 3.1.x
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore .\src\CheckCodeHelper.sln
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -49,5 +49,5 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"fdstar_CheckCodeHelper" /o:"fdstar" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build --no-restore
+          dotnet build .\src\CheckCodeHelper.sln --no-restore
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
