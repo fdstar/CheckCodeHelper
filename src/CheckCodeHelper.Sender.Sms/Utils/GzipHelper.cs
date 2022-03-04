@@ -11,7 +11,7 @@ namespace CheckCodeHelper.Sender.Sms.Utils
     /// <summary>
     /// GZip辅助类
     /// </summary>
-    public class GZipHelper
+    public static class GZipHelper
     {
         /// <summary>
         /// Gzip压缩

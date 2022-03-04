@@ -113,16 +113,13 @@ namespace CheckCodeHelper
             PeriodLimit period = null;
             var uniqueKey = this.GetUniqueKey(senderKey, bizFlag);
             var maxLimit = this.ComplexSetting.PeriodMaxLimits;
-            if (maxLimit != null && maxLimit.Count > 0)
+            if (maxLimit != null && maxLimit.Count > 0 && maxLimit.ContainsKey(uniqueKey))
             {
-                if (maxLimit.ContainsKey(uniqueKey))
+                InitPeriodLimit();
+                period.MaxLimit = maxLimit[uniqueKey];
+                if (this.ComplexSetting.PeriodLimitSeconds.ContainsKey(uniqueKey))
                 {
-                    InitPeriodLimit();
-                    period.MaxLimit = maxLimit[uniqueKey];
-                    if (this.ComplexSetting.PeriodLimitSeconds.ContainsKey(uniqueKey))
-                    {
-                        period.Period = TimeSpan.FromSeconds(this.ComplexSetting.PeriodLimitSeconds[uniqueKey]);
-                    }
+                    period.Period = TimeSpan.FromSeconds(this.ComplexSetting.PeriodLimitSeconds[uniqueKey]);
                 }
             }
             if (this.ComplexSetting.PeriodLimitIntervalSeconds.ContainsKey(uniqueKey))

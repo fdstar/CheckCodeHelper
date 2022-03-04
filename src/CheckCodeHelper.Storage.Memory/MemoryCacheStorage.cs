@@ -264,7 +264,7 @@ namespace CheckCodeHelper.Storage.Memory
         }
 
         [Serializable]
-        private class CodeStorage
+        private sealed class CodeStorage
         {
             public string Code { get; set; }
             public int Number { get; set; }

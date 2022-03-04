@@ -10,7 +10,7 @@ namespace CheckCodeHelper.Sender.Sms.Utils
     /// <summary>
     /// 秘钥生成
     /// </summary>
-    public class KeyGenerator
+    public static class KeyGenerator
     {
         /// <summary>
         /// 随机生成秘钥（对称算法）

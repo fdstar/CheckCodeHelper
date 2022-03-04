@@ -172,7 +172,7 @@ namespace CheckCodeHelper.Sender.Sms.Utils
     /// <summary>
     /// AES加密辅助类
     /// </summary>
-    public class AESHelper : SymmetricAlgorithmHelper<AesCryptoServiceProvider>//RijndaelManaged
+    public class AesHelper : SymmetricAlgorithmHelper<AesCryptoServiceProvider>//RijndaelManaged
     {
         /// <summary>
         /// 生成秘钥

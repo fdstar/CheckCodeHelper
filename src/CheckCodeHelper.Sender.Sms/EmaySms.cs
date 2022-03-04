@@ -51,7 +51,7 @@ namespace CheckCodeHelper.Sender.Sms
         {
             if (setting == null || string.IsNullOrWhiteSpace(setting.Host) || string.IsNullOrWhiteSpace(setting.AppId) || string.IsNullOrWhiteSpace(setting.SecretKey))
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(setting));
             }
             this._appId = setting.AppId;
             var key = new byte[16];
@@ -87,7 +87,7 @@ namespace CheckCodeHelper.Sender.Sms
                 request.AddHeader("gzip", "on");
                 rawData = GZipHelper.Compress(rawData);
             }
-            var encryptData = AESHelper.Encrypt(rawData, this._secretKey, null, CipherMode.ECB, PaddingMode.PKCS7);
+            var encryptData = AesHelper.Encrypt(rawData, this._secretKey, null, CipherMode.ECB, PaddingMode.PKCS7);
             request.AddParameter("", encryptData, ParameterType.RequestBody);
             return request;
         }
@@ -114,7 +114,7 @@ namespace CheckCodeHelper.Sender.Sms
         }
         private string GetResponseContent(IRestResponse response, bool useGZip)
         {
-            var data = AESHelper.Decrypt(response.RawBytes, this._secretKey, null, CipherMode.ECB, PaddingMode.PKCS7);
+            var data = AesHelper.Decrypt(response.RawBytes, this._secretKey, null, CipherMode.ECB, PaddingMode.PKCS7);
             if (useGZip)
             {
                 data = GZipHelper.Decompress(data);
