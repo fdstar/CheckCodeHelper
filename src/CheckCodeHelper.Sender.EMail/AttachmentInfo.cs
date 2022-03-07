@@ -11,7 +11,7 @@ namespace CheckCodeHelper.Sender.EMail
     /// <summary>
     /// 邮件附件信息
     /// </summary>
-    public class AttachmentInfo : IDisposable
+    public sealed class AttachmentInfo : IDisposable
     {
         /// <summary>
         /// 释放<see cref="Stream"/>

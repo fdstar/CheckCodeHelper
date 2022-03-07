@@ -60,23 +60,7 @@ namespace CheckCodeHelper
                 if (canSend)
                 {
                     //校验发送结果
-                    result = SendResult.FailInSend;
-                    if (await this.Sender.SendAsync(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false)
-                        && await this.Storage.SetCodeAsync(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false))
-                    {
-                        result = SendResult.Success;
-                        if (periodLimit != null)
-                        {
-                            if (sendCount == 0)
-                            {
-                                await this.Storage.SetPeriodAsync(receiver, bizFlag, periodLimit.Period).ConfigureAwait(false);
-                            }
-                            else
-                            {
-                                await this.Storage.IncreaseSendTimesAsync(receiver, bizFlag).ConfigureAwait(false);
-                            }
-                        }
-                    }
+                    result = await this.SendCodeAfterCheckedAsync(receiver, bizFlag, code, effectiveTime, periodLimit, sendCount);
                 }
             }
             return result;
@@ -88,6 +72,27 @@ namespace CheckCodeHelper
                 return await senderAsync.IsSupportAsync(receiver).ConfigureAwait(false);
             }
             return this.Sender.IsSupport(receiver);
+        }
+        private async Task<SendResult> SendCodeAfterCheckedAsync(string receiver, string bizFlag, string code, TimeSpan effectiveTime, PeriodLimit periodLimit, int sendCount)
+        {
+            var result = SendResult.FailInSend;
+            if (await this.Sender.SendAsync(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false)
+                && await this.Storage.SetCodeAsync(receiver, bizFlag, code, effectiveTime).ConfigureAwait(false))
+            {
+                result = SendResult.Success;
+                if (periodLimit != null)
+                {
+                    if (sendCount == 0)
+                    {
+                        await this.Storage.SetPeriodAsync(receiver, bizFlag, periodLimit.Period).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await this.Storage.IncreaseSendTimesAsync(receiver, bizFlag).ConfigureAwait(false);
+                    }
+                }
+            }
+            return result;
         }
         /// <summary>
         /// 验证校验码是否正确

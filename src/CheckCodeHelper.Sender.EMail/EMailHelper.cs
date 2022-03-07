@@ -99,11 +99,11 @@ namespace CheckCodeHelper.Sender.EMail
             var message = new MimeMessage();
             message.From.AddRange(fromAddress);
             message.To.AddRange(toAddress);
-            if (ccAddress != null && ccAddress.Any())
+            if (!this.IsEmpty(ccAddress))
             {
                 message.Cc.AddRange(ccAddress);
             }
-            if (bccAddress != null && bccAddress.Any())
+            if (!this.IsEmpty(bccAddress))
             {
                 message.Bcc.AddRange(bccAddress);
             }
@@ -112,28 +112,7 @@ namespace CheckCodeHelper.Sender.EMail
             {
                 Text = content
             };
-            MimeEntity entity = body;
-            if (attachments != null)
-            {
-                var mult = new Multipart("mixed")
-                {
-                    body
-                };
-                foreach (var att in attachments)
-                {
-                    if (att.Stream != null)
-                    {
-                        var attachment = string.IsNullOrWhiteSpace(att.ContentType) ? new MimePart() : new MimePart(att.ContentType);
-                        attachment.Content = new MimeContent(att.Stream);
-                        attachment.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
-                        attachment.ContentTransferEncoding = att.ContentTransferEncoding;
-                        attachment.FileName = ConvertHeaderToBase64(att.FileName, Encoding.UTF8);//解决附件中文名问题
-                        mult.Add(attachment);
-                    }
-                }
-                entity = mult;
-            }
-            message.Body = entity;
+            message.Body = this.GetMimeEntity(body, attachments);
             message.Date = DateTime.Now;
             using (var client = new SmtpClient())
             {
@@ -172,6 +151,35 @@ namespace CheckCodeHelper.Sender.EMail
                 return "=?" + encoding.WebName + "?B?" + ConvertToBase64(inputStr, encoding) + "?=";
             }
             return inputStr;
+        }
+        private bool IsEmpty<T>(IEnumerable<T> source)
+        {
+            return source == null || !source.Any();
+        }
+        private MimeEntity GetMimeEntity(MimePart body, IEnumerable<AttachmentInfo> attachments)
+        {
+            MimeEntity entity = body;
+            if (!this.IsEmpty(attachments))
+            {
+                var mult = new Multipart("mixed")
+                {
+                    body
+                };
+                foreach (var att in attachments)
+                {
+                    if (att.Stream != null)
+                    {
+                        var attachment = string.IsNullOrWhiteSpace(att.ContentType) ? new MimePart() : new MimePart(att.ContentType);
+                        attachment.Content = new MimeContent(att.Stream);
+                        attachment.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
+                        attachment.ContentTransferEncoding = att.ContentTransferEncoding;
+                        attachment.FileName = ConvertHeaderToBase64(att.FileName, Encoding.UTF8);//解决附件中文名问题
+                        mult.Add(attachment);
+                    }
+                }
+                entity = mult;
+            }
+            return entity;
         }
     }
 }

@@ -21,9 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper.Sender.EMai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper.Storage.Memory", "CheckCodeHelper.Storage.Memory\CheckCodeHelper.Storage.Memory.csproj", "{7DF905AF-A63E-462E-9B22-BF5503912851}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper.Storage.DistributedCache", "CheckCodeHelper.Storage.DistributedCache\CheckCodeHelper.Storage.DistributedCache.csproj", "{EC3822B7-D96F-435F-A163-84B0C7CDEA2B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckCodeHelper.Sender.AlibabaSms", "CheckCodeHelper.Sender.AlibabaSms\CheckCodeHelper.Sender.AlibabaSms.csproj", "{A75EF12C-4D4D-430F-BE97-BC4C29EA171E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheckCodeHelper.Sender.AlibabaSms", "CheckCodeHelper.Sender.AlibabaSms\CheckCodeHelper.Sender.AlibabaSms.csproj", "{A75EF12C-4D4D-430F-BE97-BC4C29EA171E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,10 +57,6 @@ Global
 		{7DF905AF-A63E-462E-9B22-BF5503912851}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DF905AF-A63E-462E-9B22-BF5503912851}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DF905AF-A63E-462E-9B22-BF5503912851}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC3822B7-D96F-435F-A163-84B0C7CDEA2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC3822B7-D96F-435F-A163-84B0C7CDEA2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC3822B7-D96F-435F-A163-84B0C7CDEA2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC3822B7-D96F-435F-A163-84B0C7CDEA2B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A75EF12C-4D4D-430F-BE97-BC4C29EA171E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A75EF12C-4D4D-430F-BE97-BC4C29EA171E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A75EF12C-4D4D-430F-BE97-BC4C29EA171E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -79,7 +73,6 @@ Global
 		{CB2BEB92-DB0A-4D28-99B0-9F3D961E6593} = {27744E1C-CEE0-41F7-988D-22734CA8787B}
 		{D33B0951-75DF-4470-B7C0-7F071149C4CA} = {27744E1C-CEE0-41F7-988D-22734CA8787B}
 		{7DF905AF-A63E-462E-9B22-BF5503912851} = {27744E1C-CEE0-41F7-988D-22734CA8787B}
-		{EC3822B7-D96F-435F-A163-84B0C7CDEA2B} = {27744E1C-CEE0-41F7-988D-22734CA8787B}
 		{A75EF12C-4D4D-430F-BE97-BC4C29EA171E} = {27744E1C-CEE0-41F7-988D-22734CA8787B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

@@ -54,7 +54,7 @@ namespace CheckCodeHelper
         /// <param name="effectiveTime">校验码有效时间范围</param>
         /// <param name="senderKey"><see cref="ICodeSender.Key"/></param>
         /// <returns></returns>
-        public string GetContent(string receiver, string bizFlag, string code, TimeSpan effectiveTime, string senderKey)
+        public string GetContent(string receiver, string bizFlag, string code, TimeSpan effectiveTime, string senderKey = null)
         {
             if (string.IsNullOrWhiteSpace(bizFlag))
             {
